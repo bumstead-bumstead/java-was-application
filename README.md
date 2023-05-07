@@ -1,6 +1,6 @@
-# java-was-2022
-Java Web Application Server 2022
+# java-was-2023
 
+Java Web Application Server 2023
 
 ## 프로젝트 정보 
 
