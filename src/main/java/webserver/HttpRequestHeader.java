@@ -1,4 +1,4 @@
-package model.Domain;
+package webserver;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,7 +37,7 @@ public class HttpRequestHeader {
         return metadata;
     }
 
-    public static HttpRequestHeader createaHttpRequestHeaderWithBufferedReader(BufferedReader bufferedReader) throws IOException {
+    public static HttpRequestHeader createHttpRequestHeaderWithBufferedReader(BufferedReader bufferedReader) throws IOException {
         String line = bufferedReader.readLine();
 
         String[] requestLine = line.split(" ");

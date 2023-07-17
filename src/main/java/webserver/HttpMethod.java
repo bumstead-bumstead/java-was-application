@@ -1,4 +1,4 @@
-package model.Domain;
+package webserver;
 
 public enum HttpMethod {
     GET,

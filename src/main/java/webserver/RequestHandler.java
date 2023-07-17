@@ -4,12 +4,12 @@ import java.io.*;
 import java.net.Socket;
 
 import com.google.common.io.ByteStreams;
-import model.Domain.HttpRequestHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    public static final String TEMPLATES_PATH = "/Users/yohwan/IdeaProjects/be-was/src/main/resources/templates";
 
     private Socket connection;
 
@@ -26,20 +26,30 @@ public class RequestHandler implements Runnable {
 
             DataOutputStream dos = new DataOutputStream(out);
 
-            FileInputStream fileInputStream = new FileInputStream("/Users/yohwan/IdeaProjects/be-was/src/main/resources/templates" + httpRequestHeader.getURI());
-            byte[] body = ByteStreams.toByteArray(fileInputStream);
+            //todo : Http Method별 처리 로직 추가
+            byte[] body = getBytesOfGetRequest(httpRequestHeader);
+
             response200Header(dos, body.length);
+//            response400Header(dos);
             responseBody(dos, body);
+        } catch (FileNotFoundException e) {
+            //todo : 404 에러 던지기
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private static HttpRequestHeader convertToHttpRequestHeader(InputStream in) throws IOException {
+    private byte[] getBytesOfGetRequest(HttpRequestHeader httpRequestHeader) throws IOException {
+        FileInputStream fileInputStream = new FileInputStream(TEMPLATES_PATH + httpRequestHeader.getURI());
+
+        return ByteStreams.toByteArray(fileInputStream);
+    }
+
+    private HttpRequestHeader convertToHttpRequestHeader(InputStream in) throws IOException {
         InputStreamReader inputStreamReader = new InputStreamReader(in);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-        return HttpRequestHeader.createaHttpRequestHeaderWithBufferedReader(bufferedReader);
+        return HttpRequestHeader.createHttpRequestHeaderWithBufferedReader(bufferedReader);
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
@@ -51,6 +61,11 @@ public class RequestHandler implements Runnable {
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private void response400Header(DataOutputStream dos) throws IOException {
+        dos.writeBytes("HTTP/1.1 400 Bad Reqeust");
+        dos.flush();
     }
 
     private void responseBody(DataOutputStream dos, byte[] body) {
