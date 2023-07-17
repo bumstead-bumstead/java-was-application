@@ -1,25 +1,22 @@
 package webserver;
 
 
-import utils.HttpHeaderParsingUtils;
-
-import static utils.HttpHeaderParsingUtils.*;
+import static utils.ParsingUtils.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class HttpRequestHeader {
     private HttpMethod method;
-    private String URI;
+    private URI uri;
     private String version;
     private Map<String, String> metadata;
 
-    public HttpRequestHeader(HttpMethod method, String URI, String version, Map<String, String> metadata) {
+    public HttpRequestHeader(HttpMethod method, String uri, String version, Map<String, String> metadata) {
         this.method = method;
-        this.URI = URI;
+        this.uri = URI.createURIWithString(uri);
         this.version = version;
         this.metadata = metadata;
     }
@@ -28,8 +25,8 @@ public class HttpRequestHeader {
         return method;
     }
 
-    public String getURI() {
-        return URI;
+    public URI getURI() {
+        return uri;
     }
 
     public String getVersion() {
@@ -42,13 +39,13 @@ public class HttpRequestHeader {
 
     public static HttpRequestHeader createHttpRequestHeaderWithBufferedReader(BufferedReader bufferedReader) throws IOException {
         List<String> requestHeaderList = parseBufferedReader(bufferedReader);
-        List<String> requestLine = parseRequestLine(requestHeaderList.remove(0));
+        List<String> requestLine = parseStringToList(requestHeaderList.remove(0));
 
         HttpMethod method = HttpMethod.valueOf(requestLine.get(0));
         String URI = requestLine.get(1);
         String version = requestLine.get(2);
 
-        Map<String, String> metadata = parseMetaData(requestHeaderList);
+        Map<String, String> metadata = parseListToMap(requestHeaderList);
 
         return new HttpRequestHeader(method, URI, version, metadata);
     }
