@@ -1,20 +1,24 @@
 package webserver;
 
 
+import com.google.common.io.ByteStreams;
+
 import static utils.ParsingUtils.*;
+import static webserver.RequestHandler.TEMPLATES_PATH;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public class HttpRequestHeader {
+public class HttpRequest {
     private HttpMethod method;
     private URI uri;
     private String version;
     private Map<String, String> metadata;
 
-    public HttpRequestHeader(HttpMethod method, String uri, String version, Map<String, String> metadata) {
+    public HttpRequest(HttpMethod method, String uri, String version, Map<String, String> metadata) {
         this.method = method;
         this.uri = URI.createURIWithString(uri);
         this.version = version;
@@ -37,7 +41,7 @@ public class HttpRequestHeader {
         return metadata;
     }
 
-    public static HttpRequestHeader createHttpRequestHeaderWithBufferedReader(BufferedReader bufferedReader) throws IOException {
+    public static HttpRequest createHttpRequestHeaderWithBufferedReader(BufferedReader bufferedReader) throws IOException {
         List<String> requestHeaderList = parseBufferedReader(bufferedReader);
         List<String> requestLine = parseStringToList(requestHeaderList.remove(0));
 
@@ -47,6 +51,12 @@ public class HttpRequestHeader {
 
         Map<String, String> metadata = parseListToMap(requestHeaderList);
 
-        return new HttpRequestHeader(method, URI, version, metadata);
+        return new HttpRequest(method, URI, version, metadata);
+    }
+
+    public byte[] getBytesOfGetRequest() throws IOException {
+        FileInputStream fileInputStream = new FileInputStream(TEMPLATES_PATH + this.uri.getPath());
+
+        return ByteStreams.toByteArray(fileInputStream);
     }
 }

@@ -22,14 +22,24 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpRequestHeader httpRequestHeader = convertToHttpRequestHeader(in);
+            /*
+            * logic
+            * 1. inputStream HttpRequest로 파싱
+            * 2. method, path 보고 처리할 메소드 매핑
+            * 3. HttpResponse 객체 생성
+            * 4. flush();
+            *
+            * todo
+            *  1.
+            * */
+            HttpRequest httpRequest = convertToHttpRequestHeader(in);
 
-            printHttpRequestHeader(httpRequestHeader);
+            printHttpRequestHeader(httpRequest);
 
             DataOutputStream dos = new DataOutputStream(out);
 
             //todo : Http Method별 처리 로직 추가
-            byte[] body = getBytesOfGetRequest(httpRequestHeader);
+            byte[] body = httpRequest.getBytesOfGetRequest();//getBytesOfGetRequest(httpRequest);
 
             response200Header(dos, body.length);
             responseBody(dos, body);
@@ -40,24 +50,18 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private static void printHttpRequestHeader(HttpRequestHeader httpRequestHeader) {
-        logger.debug("method : " + httpRequestHeader.getMethod());
-        logger.debug("version : " + httpRequestHeader.getVersion());
-        logger.debug("URI : " + httpRequestHeader.getURI());
-        logger.debug("metadata : " + httpRequestHeader.getMetadata());
+    private static void printHttpRequestHeader(HttpRequest httpRequest) {
+        logger.debug("method : " + httpRequest.getMethod());
+        logger.debug("version : " + httpRequest.getVersion());
+        logger.debug("URI : " + httpRequest.getURI());
+        logger.debug("metadata : " + httpRequest.getMetadata());
     }
 
-    private byte[] getBytesOfGetRequest(HttpRequestHeader httpRequestHeader) throws IOException {
-        FileInputStream fileInputStream = new FileInputStream(TEMPLATES_PATH + httpRequestHeader.getURI());
-
-        return ByteStreams.toByteArray(fileInputStream);
-    }
-
-    private HttpRequestHeader convertToHttpRequestHeader(InputStream in) throws IOException {
+    private HttpRequest convertToHttpRequestHeader(InputStream in) throws IOException {
         InputStreamReader inputStreamReader = new InputStreamReader(in);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-        return HttpRequestHeader.createHttpRequestHeaderWithBufferedReader(bufferedReader);
+        return HttpRequest.createHttpRequestHeaderWithBufferedReader(bufferedReader);
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
