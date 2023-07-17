@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 public class WebServer {
     private static final Logger logger = LoggerFactory.getLogger(WebServer.class);
     private static final int DEFAULT_PORT = 8080;
+    private static final int N_THREAD = 100;
 
     public static void main(String args[]) throws Exception {
         int port = 0;
@@ -28,8 +29,8 @@ public class WebServer {
             // 클라이언트가 연결될때까지 대기한다.
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
-                ExecutorService executorService = Executors.newCachedThreadPool();
-                executorService.execute(new RequestHandler(connection));
+                ExecutorService executorService = Executors.newFixedThreadPool(N_THREAD);
+                executorService.submit(new RequestHandler(connection));
             }
         }
     }
