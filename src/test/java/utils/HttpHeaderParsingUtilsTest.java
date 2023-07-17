@@ -6,7 +6,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.*;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,7 @@ public class HttpHeaderParsingUtilsTest {
         //when
         InputStream inputStream = new ByteArrayInputStream(stringBuffer.toString().getBytes());
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        List<String> result = HttpHeaderParsingUtils.parseBufferedReader(bufferedReader);
+        List<String> result = ParsingUtils.parseBufferedReader(bufferedReader);
 
         //Then
         assertEquals(testString1, result.get(0));
@@ -49,7 +48,7 @@ public class HttpHeaderParsingUtilsTest {
         Map<String, String> result = Map.of("key1", "value1", "key2", "value2", "key3", "value3");
 
         //when
-        Map<String, String> actual = HttpHeaderParsingUtils.parseMetaData(list);
+        Map<String, String> actual = ParsingUtils.parseListToMap(list);
 
         //then
         assertEquals(result, actual);
@@ -63,7 +62,7 @@ public class HttpHeaderParsingUtilsTest {
         Map<String, String> result = Map.of("key1", "value1", "key2", "value2", "key3", "value3");
 
         //when
-        Map<String, String> actual = HttpHeaderParsingUtils.parseMetaData(list);
+        Map<String, String> actual = ParsingUtils.parseListToMap(list);
 
         //then
         assertEquals(result, actual);
@@ -71,7 +70,7 @@ public class HttpHeaderParsingUtilsTest {
     @ParameterizedTest
     @MethodSource("provideStringListForRequestLineTest")
     void parseRequestLine(String input, List<String> result) {
-        assertEquals(result, HttpHeaderParsingUtils.parseRequestLine(input));
+        assertEquals(result, ParsingUtils.parseStringToList(input));
     }
     private static Stream<Arguments> provideStringListForRequestLineTest() {
         return Stream.of(

@@ -24,19 +24,27 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpRequestHeader httpRequestHeader = convertToHttpRequestHeader(in);
 
+            printHttpRequestHeader(httpRequestHeader);
+
             DataOutputStream dos = new DataOutputStream(out);
 
             //todo : Http Method별 처리 로직 추가
             byte[] body = getBytesOfGetRequest(httpRequestHeader);
 
             response200Header(dos, body.length);
-//            response400Header(dos);
             responseBody(dos, body);
         } catch (FileNotFoundException e) {
             //todo : 404 에러 던지기
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private static void printHttpRequestHeader(HttpRequestHeader httpRequestHeader) {
+        logger.debug("method : " + httpRequestHeader.getMethod());
+        logger.debug("version : " + httpRequestHeader.getVersion());
+        logger.debug("URI : " + httpRequestHeader.getURI());
+        logger.debug("metadata : " + httpRequestHeader.getMetadata());
     }
 
     private byte[] getBytesOfGetRequest(HttpRequestHeader httpRequestHeader) throws IOException {

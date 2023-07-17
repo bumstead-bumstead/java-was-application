@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class HttpHeaderParsingUtils {
+public class ParsingUtils {
 
     public static List<String> parseBufferedReader(BufferedReader bufferedReader) throws IOException {
         List<String> result = new ArrayList<>();
@@ -18,18 +18,34 @@ public class HttpHeaderParsingUtils {
         return result;
     }
 
-    public static List<String> parseRequestLine(String requestLine) {
+    public static List<String> parseStringToList(String requestLine) {
         String[] requestLineArray = requestLine.split(" ");
         List<String> result = Arrays.stream(requestLineArray).collect(Collectors.toList());
 
         return result;
     }
+    public static List<String> parseStringToList(String requestLine, String seperator) {
+        String[] requestLineArray = requestLine.split(seperator);
+        List<String> result = Arrays.stream(requestLineArray).collect(Collectors.toList());
 
-    public static Map<String, String> parseMetaData(List<String> requestHeaderList) {
+        return result;
+    }
+
+    public static Map<String, String> parseListToMap(List<String> requestHeaderList) {
         Map<String, String> metadata = new HashMap<>();
 
         for (String line : requestHeaderList) {
             String[] field = line.split(":");
+            metadata.put(removeSpaces(field[0]), removeSpaces(field[1]));
+        }
+
+        return metadata;
+    }
+    public static Map<String, String> parseListToMap(List<String> requestHeaderList, String seperator) {
+        Map<String, String> metadata = new HashMap<>();
+
+        for (String line : requestHeaderList) {
+            String[] field = line.split(seperator);
             metadata.put(removeSpaces(field[0]), removeSpaces(field[1]));
         }
 
