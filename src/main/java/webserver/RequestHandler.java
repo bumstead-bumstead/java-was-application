@@ -3,6 +3,8 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 
+import com.google.common.io.ByteStreams;
+import model.Domain.HttpRequestHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,21 +22,24 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            InputStreamReader inputStreamReader = new InputStreamReader(in);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            String line = bufferedReader.readLine();
-            while (line != null && !line.equals("")) {
-                logger.info(line);
-                line = bufferedReader.readLine();
-            }
+            HttpRequestHeader httpRequestHeader = convertToHttpRequestHeader(in);
 
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
+
+            FileInputStream fileInputStream = new FileInputStream("/Users/yohwan/IdeaProjects/be-was/src/main/resources/templates" + httpRequestHeader.getURI());
+            byte[] body = ByteStreams.toByteArray(fileInputStream);
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private static HttpRequestHeader convertToHttpRequestHeader(InputStream in) throws IOException {
+        InputStreamReader inputStreamReader = new InputStreamReader(in);
+        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+        return HttpRequestHeader.createaHttpRequestHeaderWithBufferedReader(bufferedReader);
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
