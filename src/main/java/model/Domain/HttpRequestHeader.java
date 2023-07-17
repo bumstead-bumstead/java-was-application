@@ -45,9 +45,14 @@ public class HttpRequestHeader {
         String URI = requestLine[1];
         String version = requestLine[2];
 
-        line = bufferedReader.readLine();
+        Map<String, String> metadata = fillMetadata(bufferedReader);
 
+        return new HttpRequestHeader(method, URI, version, metadata);
+    }
+
+    private static Map<String, String> fillMetadata(BufferedReader bufferedReader) throws IOException {
         Map<String, String> metadata = new HashMap<>();
+        String line = bufferedReader.readLine();
 
         while (line != null && !line.equals("")) {
             String[] field = line.split(": ");
@@ -55,7 +60,6 @@ public class HttpRequestHeader {
 
             line = bufferedReader.readLine();
         }
-
-        return new HttpRequestHeader(method, URI, version, metadata);
+        return metadata;
     }
 }
