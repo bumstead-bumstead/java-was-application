@@ -1,4 +1,4 @@
-package webserver;
+package webserver.message;
 
 import java.util.Map;
 

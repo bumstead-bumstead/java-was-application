@@ -1,4 +1,4 @@
-package webserver;
+package webserver.message;
 
 public enum HttpMethod {
     GET,

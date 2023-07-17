@@ -1,4 +1,4 @@
-package webserver;
+package webserver.message;
 
 
 import com.google.common.io.ByteStreams;
