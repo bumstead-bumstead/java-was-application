@@ -58,7 +58,7 @@ public class HttpMessageParser {
         outputStream.write(statusLine.getBytes());
     }
 
-    public static HttpRequest parseHttpResponse(InputStream inputStream) throws IOException {
+    public static HttpRequest parseHttpRequest(InputStream inputStream) throws IOException {
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
@@ -125,19 +125,6 @@ public class HttpMessageParser {
 
         return metadata;
     }
-
-//    public static Map<String, String> parseListToMap(List<String> requestHeaderList, String seperator) {
-//        Map<String, String> metadata = new HashMap<>();
-//
-//        for (String line : requestHeaderList) {
-//            String[] field = line.split(seperator);
-//            metadata.put(removeSpaces(field[0]), removeSpaces(field[1]));
-//        }
-//
-//        return metadata;
-//    }
-
-
 
     private static String removeSpaces(String input) {
         return input.replaceAll("\\s", "");
