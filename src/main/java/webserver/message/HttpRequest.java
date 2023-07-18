@@ -3,7 +3,7 @@ package webserver.message;
 
 import com.google.common.io.ByteStreams;
 
-import static utils.ParsingUtils.*;
+import static utils.HttpMessageParser.*;
 import static webserver.RequestHandler.TEMPLATES_PATH;
 
 import java.io.BufferedReader;
@@ -16,13 +16,13 @@ public class HttpRequest {
     private HttpMethod method;
     private URI uri;
     private String version;
-    private Map<String, String> metadata;
+    private Map<String, String> headers;
 
-    public HttpRequest(HttpMethod method, String uri, String version, Map<String, String> metadata) {
+    public HttpRequest(HttpMethod method, URI uri, String version, Map<String, String> metadata) {
         this.method = method;
-        this.uri = URI.createURIWithString(uri);
+        this.uri = uri;
         this.version = version;
-        this.metadata = metadata;
+        this.headers = metadata;
     }
 
     public HttpMethod getMethod() {
@@ -37,23 +37,24 @@ public class HttpRequest {
         return version;
     }
 
-    public Map<String, String> getMetadata() {
-        return metadata;
+    public Map<String, String> getHeaders() {
+        return headers;
     }
 
-    public static HttpRequest createHttpRequestHeaderWithBufferedReader(BufferedReader bufferedReader) throws IOException {
-        List<String> requestHeaderList = parseBufferedReader(bufferedReader);
-        List<String> requestLine = parseStringToList(requestHeaderList.remove(0));
+//    public static HttpRequest createHttpRequestHeaderWithBufferedReader(BufferedReader bufferedReader) throws IOException {
+//        List<String> requestHeaderList = parseBufferedReader(bufferedReader);
+//        List<String> requestLine = parseRequestLine(requestHeaderList.remove(0));
+//
+//        HttpMethod method = HttpMethod.valueOf(requestLine.get(0));
+//        String URI = requestLine.get(1);
+//        String version = requestLine.get(2);
+//
+//        Map<String, String> metadata = parseMetadata(requestHeaderList);
+//
+//        return new HttpRequest(method, URI, version, metadata);
+//    }
 
-        HttpMethod method = HttpMethod.valueOf(requestLine.get(0));
-        String URI = requestLine.get(1);
-        String version = requestLine.get(2);
-
-        Map<String, String> metadata = parseListToMap(requestHeaderList);
-
-        return new HttpRequest(method, URI, version, metadata);
-    }
-
+    //역할 분리
     public byte[] getBytesOfGetRequest() throws IOException {
         FileInputStream fileInputStream = new FileInputStream(TEMPLATES_PATH + this.uri.getPath());
 

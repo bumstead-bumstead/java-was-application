@@ -19,7 +19,7 @@ public enum StatusCode {
     NOT_IMPLEMENTED(501),
     BAD_GATEWAT(502);
 
-    int codeNumber;
+    public int codeNumber;
 
     StatusCode(int statusCodeNumber) {
         this.codeNumber = statusCodeNumber;

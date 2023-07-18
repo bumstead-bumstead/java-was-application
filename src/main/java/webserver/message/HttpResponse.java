@@ -11,19 +11,19 @@ public class HttpResponse {
     private String version;
     private StatusCode statusCode;
 
-    private Map<String, String> metadata;
-    private byte[] body;
+    private Map<String, String> headers;
 
+    private byte[] body;
     private HttpResponse(String version, StatusCode statusCode, Map<String, String> metadata, byte[] body) {
         this.version = version;
         this.statusCode = statusCode;
-        this.metadata = metadata;
+        this.headers = metadata;
         this.body = body;
     }
 
     private HttpResponse(StatusCode statusCode, byte[] body) {
         this.version = "HTTP/1.1";
-        this.metadata = Map.of("Content-Type", "text/html;charset=utf-8", "Content-Length", String.valueOf(body.length));
+        this.headers = Map.of("Content-Type", "text/html;charset=utf-8", "Content-Length", String.valueOf(body.length));
         this.statusCode = statusCode;
         this.body = body;
     }
@@ -34,11 +34,15 @@ public class HttpResponse {
 
     public void writeResponse(DataOutputStream dataOutputStream) throws IOException {
         dataOutputStream.writeBytes(version + " " + statusCode.codeNumber + " " + statusCode.name() + "\r\n");
-        for (Map.Entry<String, String> line : metadata.entrySet()) {
+        for (Map.Entry<String, String> line : headers.entrySet()) {
             dataOutputStream.writeBytes(line.getKey() + ": " + line.getValue() + "\r\n");
         }
         dataOutputStream.writeBytes("Content-Length: " + body.length + "\r\n");
         dataOutputStream.writeBytes("\r\n");
+    }
+
+    public byte[] getBody() {
+        return body;
     }
 
     public String getVersion() {
@@ -57,11 +61,11 @@ public class HttpResponse {
         this.statusCode = statusCode;
     }
 
-    public Map<String, String> getMetadata() {
-        return metadata;
+    public Map<String, String> getHeaders() {
+        return headers;
     }
 
-    public void setMetadata(Map<String, String> metadata) {
-        this.metadata = metadata;
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
     }
 }
