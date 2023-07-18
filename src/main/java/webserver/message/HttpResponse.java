@@ -2,7 +2,9 @@ package webserver.message;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 public class HttpResponse {
     private final String version;
@@ -19,7 +21,7 @@ public class HttpResponse {
         this.body = body;
     }
 
-    private HttpResponse(StatusCode statusCode, byte[] body) {
+    public HttpResponse(StatusCode statusCode, byte[] body) {
         this.version = "HTTP/1.1";
         this.headers = Map.of("Content-Type", "text/html;charset=utf-8", "Content-Length", String.valueOf(body.length));
         this.statusCode = statusCode;
@@ -44,5 +46,20 @@ public class HttpResponse {
 
     public Map<String, String> getHeaders() {
         return headers;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HttpResponse that = (HttpResponse) o;
+        return Objects.equals(version, that.version) && statusCode == that.statusCode && Objects.equals(headers, that.headers) && Arrays.equals(body, that.body);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(version, statusCode, headers);
+        result = 31 * result + Arrays.hashCode(body);
+        return result;
     }
 }
