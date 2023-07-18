@@ -1,29 +1,40 @@
-package webserver.message;
+package webserver.httpMessage;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import static utils.HttpMessageParser.*;
+import java.util.Optional;
 
 public class URI {
     public static final String QUERY_SEPARATOR = "?";
     public static final String PARAMETER_SEPARATOR = "&";
     private final String path;
     private final Map<String, String> parameters;
+    private final Optional<String> extension;
 
     public URI(String path, Map<String, String> parameters) {
         this.path = path;
         this.parameters = parameters;
+        this.extension = Optional.empty();
+    }
+
+    public URI(String path, Map<String, String> parameters, String extension) {
+        this.path = path;
+        this.parameters = parameters;
+        this.extension = Optional.of(extension);
     }
 
     public boolean hasParameter() {
         return !parameters.isEmpty();
     }
 
+
+
     public String getPath() {
         return path;
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
     }
 
     @Override

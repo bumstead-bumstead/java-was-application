@@ -1,13 +1,13 @@
 package utils;
 
-import webserver.message.*;
+import webserver.httpMessage.*;
 
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static webserver.message.URI.PARAMETER_SEPARATOR;
-import static webserver.message.URI.QUERY_SEPARATOR;
+import static webserver.httpMessage.URI.PARAMETER_SEPARATOR;
+import static webserver.httpMessage.URI.QUERY_SEPARATOR;
 
 public class HttpMessageParser {
 
@@ -87,10 +87,17 @@ public class HttpMessageParser {
             parameters = parseHeaders(queryList);
         }
 
+        if (path.contains(".")) {
+            int dotIndex = path.lastIndexOf(".");
+            String extension = path.substring(dotIndex + 1);
+
+            return new URI(path, parameters, extension);
+        }
+
         return new URI(path, parameters);
     }
 
-    public static List<String> parseBufferedReader(BufferedReader bufferedReader) throws IOException {
+    private static List<String> parseBufferedReader(BufferedReader bufferedReader) throws IOException {
         List<String> result = new ArrayList<>();
         String line = bufferedReader.readLine();
 
@@ -101,21 +108,21 @@ public class HttpMessageParser {
         return result;
     }
 
-    public static List<String> parseRequestLine(String requestLine) {
+    private static List<String> parseRequestLine(String requestLine) {
         String[] requestLineArray = requestLine.split(" ");
         List<String> result = Arrays.stream(requestLineArray).collect(Collectors.toList());
 
         return result;
     }
 
-    public static List<String> parseStringToList(String requestLine, String separator) {
+    private static List<String> parseStringToList(String requestLine, String separator) {
         String[] requestLineArray = requestLine.split(separator);
         List<String> result = Arrays.stream(requestLineArray).collect(Collectors.toList());
 
         return result;
     }
 
-    public static Map<String, String> parseHeaders(List<String> requestHeaderList) {
+    private static Map<String, String> parseHeaders(List<String> requestHeaderList) {
         Map<String, String> metadata = new HashMap<>();
 
         for (String line : requestHeaderList) {
