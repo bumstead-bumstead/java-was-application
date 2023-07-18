@@ -4,16 +4,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
-/*
-* response 객체 만들고,
-* */
 public class HttpResponse {
-    private String version;
-    private StatusCode statusCode;
+    private final String version;
+    private final StatusCode statusCode;
 
-    private Map<String, String> headers;
+    private final Map<String, String> headers;
 
-    private byte[] body;
+    private final byte[] body;
+
     private HttpResponse(String version, StatusCode statusCode, Map<String, String> metadata, byte[] body) {
         this.version = version;
         this.statusCode = statusCode;
@@ -32,15 +30,6 @@ public class HttpResponse {
         return new HttpResponse(statusCode, body);
     }
 
-    public void writeResponse(DataOutputStream dataOutputStream) throws IOException {
-        dataOutputStream.writeBytes(version + " " + statusCode.codeNumber + " " + statusCode.name() + "\r\n");
-        for (Map.Entry<String, String> line : headers.entrySet()) {
-            dataOutputStream.writeBytes(line.getKey() + ": " + line.getValue() + "\r\n");
-        }
-        dataOutputStream.writeBytes("Content-Length: " + body.length + "\r\n");
-        dataOutputStream.writeBytes("\r\n");
-    }
-
     public byte[] getBody() {
         return body;
     }
@@ -49,23 +38,11 @@ public class HttpResponse {
         return version;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
     public StatusCode getStatusCode() {
         return statusCode;
     }
 
-    public void setStatusCode(StatusCode statusCode) {
-        this.statusCode = statusCode;
-    }
-
     public Map<String, String> getHeaders() {
         return headers;
-    }
-
-    public void setHeaders(Map<String, String> headers) {
-        this.headers = headers;
     }
 }

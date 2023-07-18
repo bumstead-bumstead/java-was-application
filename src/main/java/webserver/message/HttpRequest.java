@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Map;
 
 public class HttpRequest {
-    private HttpMethod method;
-    private URI uri;
-    private String version;
-    private Map<String, String> headers;
+    private final HttpMethod method;
+    private final URI uri;
+    private final String version;
+    private final Map<String, String> headers;
 
     public HttpRequest(HttpMethod method, URI uri, String version, Map<String, String> metadata) {
         this.method = method;
@@ -40,19 +40,6 @@ public class HttpRequest {
     public Map<String, String> getHeaders() {
         return headers;
     }
-
-//    public static HttpRequest createHttpRequestHeaderWithBufferedReader(BufferedReader bufferedReader) throws IOException {
-//        List<String> requestHeaderList = parseBufferedReader(bufferedReader);
-//        List<String> requestLine = parseRequestLine(requestHeaderList.remove(0));
-//
-//        HttpMethod method = HttpMethod.valueOf(requestLine.get(0));
-//        String URI = requestLine.get(1);
-//        String version = requestLine.get(2);
-//
-//        Map<String, String> metadata = parseMetadata(requestHeaderList);
-//
-//        return new HttpRequest(method, URI, version, metadata);
-//    }
 
     //역할 분리
     public byte[] getBytesOfGetRequest() throws IOException {
