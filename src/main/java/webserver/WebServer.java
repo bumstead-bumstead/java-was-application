@@ -25,9 +25,10 @@ public class WebServer {
         try (ServerSocket listenSocket = new ServerSocket(port)) {
             logger.info("Web Application Server started {} port.", port);
 
+            ExecutorService executorService = Executors.newFixedThreadPool(N_THREAD);
             Socket connection;
+
             while ((connection = listenSocket.accept()) != null) {
-                ExecutorService executorService = Executors.newFixedThreadPool(N_THREAD);
                 executorService.submit(new RequestHandler(connection));
             }
         }

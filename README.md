@@ -11,3 +11,4 @@ Java Web Application Server 2023
 - ParsingUtils -> inputStream을 입력받아 HttpRequest를 반환하거나, HttpResponse를 입력받아 Outputstream을 반환하는 로직을 모두 갖고 있게 하는 방법과 지금의 방법을 고민했다. 
   조금 더 일반적으로 쓰이는 것이 좋을 것 같아서 지금의 방법을 선택했다. -> 다시 반대로 수정했다. Parsing하는 역할을 분리하는 것만으로 충분한 것 같고, 이 로직이 일반적으로 쓰이지 않을 것이라고 생각했기 때문이다.
 - ByteArrayOutputStream 객체를 단순히 데이터 이동의 수단으로 쓰는 것 -> 더 좋은 방법 생각해보기
+- 정적인 템플릿 요청에 대해서, 이걸 찾아서 바이트로 넘겨주는 역할을 분리해야할 것 같다.

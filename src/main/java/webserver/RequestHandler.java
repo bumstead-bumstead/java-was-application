@@ -29,7 +29,7 @@ public class RequestHandler implements Runnable {
 
             printHttpRequestHeader(httpRequest);
 
-            //todo : Http Method별 처리 로직
+            //todo : Http Method 별 처리 로직
             byte[] body = httpRequest.getBytesOfGetRequest();
             HttpResponse httpResponse = HttpResponse.generateHttpResponse(StatusCode.OK, body);
 
@@ -54,6 +54,6 @@ public class RequestHandler implements Runnable {
         logger.debug("method : " + httpRequest.getMethod());
         logger.debug("version : " + httpRequest.getVersion());
         logger.debug("URI : " + httpRequest.getURI());
-        logger.debug("metadata : " + httpRequest.getHeaders());
+        logger.debug("headers : " + httpRequest.getHeaders());
     }
 }
