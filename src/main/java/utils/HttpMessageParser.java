@@ -119,7 +119,7 @@ public class HttpMessageParser {
         Map<String, String> metadata = new HashMap<>();
 
         for (String line : requestHeaderList) {
-            String[] field = line.split(":");
+            String[] field = line.split(":", 2);
             metadata.put(removeSpaces(field[0]), removeSpaces(field[1]));
         }
 
