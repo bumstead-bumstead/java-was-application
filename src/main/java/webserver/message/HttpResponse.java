@@ -1,5 +1,7 @@
 package webserver.message;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Map;
 
 /*
@@ -10,16 +12,34 @@ public class HttpResponse {
     private StatusCode statusCode;
 
     private Map<String, String> metadata;
-    private String body;
+    private byte[] body;
 
-    public HttpResponse(String version, StatusCode statusCode, Map<String, String> metadata, String body) {
+    private HttpResponse(String version, StatusCode statusCode, Map<String, String> metadata, byte[] body) {
         this.version = version;
         this.statusCode = statusCode;
         this.metadata = metadata;
         this.body = body;
     }
 
-    //todo : default metadata 로직
+    private HttpResponse(StatusCode statusCode, byte[] body) {
+        this.version = "HTTP/1.1";
+        this.metadata = Map.of("Content-Type", "text/html;charset=utf-8", "Content-Length", String.valueOf(body.length));
+        this.statusCode = statusCode;
+        this.body = body;
+    }
+
+    public static HttpResponse generateHttpResponse(StatusCode statusCode, byte[] body) {
+        return new HttpResponse(statusCode, body);
+    }
+
+    public void writeResponse(DataOutputStream dataOutputStream) throws IOException {
+        dataOutputStream.writeBytes(version + " " + statusCode.codeNumber + " " + statusCode.name() + "\r\n");
+        for (Map.Entry<String, String> line : metadata.entrySet()) {
+            dataOutputStream.writeBytes(line.getKey() + ": " + line.getValue() + "\r\n");
+        }
+        dataOutputStream.writeBytes("Content-Length: " + body.length + "\r\n");
+        dataOutputStream.writeBytes("\r\n");
+    }
 
     public String getVersion() {
         return version;
