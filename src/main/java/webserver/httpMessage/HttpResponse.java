@@ -1,10 +1,10 @@
-package webserver.message;
+package webserver.httpMessage;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+
+import static webserver.httpMessage.HttpHeaders.*;
 
 public class HttpResponse {
     private final String version;
@@ -22,8 +22,8 @@ public class HttpResponse {
     }
 
     public HttpResponse(StatusCode statusCode, byte[] body) {
-        this.version = "HTTP/1.1";
-        this.headers = Map.of("Content-Type", "text/html;charset=utf-8", "Content-Length", String.valueOf(body.length));
+        this.version = DEFAULT_HTTP_VERSION;
+        this.headers = Map.of(CONTENT_TYPE_HEADER, DEFAULT_CONTENT_TYPE_VALUE, CONTENT_LENGTH_HEADER, String.valueOf(body.length));
         this.statusCode = statusCode;
         this.body = body;
     }

@@ -1,33 +1,30 @@
-package webserver.message;
+package webserver.httpMessage;
 
 
 import com.google.common.io.ByteStreams;
 
-import static utils.HttpMessageParser.*;
-import static webserver.RequestHandler.TEMPLATES_PATH;
-
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static webserver.RequestHandler.TEMPLATES_PATH;
+
 public class HttpRequest {
-    private final HttpMethod method;
+    private final HttpMethod httpMethod;
     private final URI uri;
     private final String version;
     private final Map<String, String> headers;
 
     public HttpRequest(HttpMethod method, URI uri, String version, Map<String, String> headers) {
-        this.method = method;
+        this.httpMethod = method;
         this.uri = uri;
         this.version = version;
         this.headers = headers;
     }
 
-    public HttpMethod getMethod() {
-        return method;
+    public HttpMethod getHttpMethod() {
+        return httpMethod;
     }
 
     public URI getURI() {
@@ -54,11 +51,11 @@ public class HttpRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         HttpRequest that = (HttpRequest) o;
-        return method == that.method && Objects.equals(uri, that.uri) && Objects.equals(version, that.version) && Objects.equals(headers, that.headers);
+        return httpMethod == that.httpMethod && Objects.equals(uri, that.uri) && Objects.equals(version, that.version) && Objects.equals(headers, that.headers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(method, uri, version, headers);
+        return Objects.hash(httpMethod, uri, version, headers);
     }
 }

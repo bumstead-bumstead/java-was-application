@@ -14,4 +14,8 @@ public class StringUtils {
         StringBuilder result = new StringBuilder(integer);
         return result.append(NEWLINE).toString();
     }
+
+    public static String appendNewLine() {
+        return NEWLINE;
+    }
 }

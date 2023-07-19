@@ -7,6 +7,11 @@ import java.util.Optional;
 public class URI {
     public static final String QUERY_SEPARATOR = "?";
     public static final String PARAMETER_SEPARATOR = "&";
+    public static final String SPACE = " ";
+    public static final String HEADER_SEPARATOR = ": ";
+    public static final String PARAMETER_EQUAL_SIGN = "=";
+    public static final String EXTENSION_SEPARATOR = ".";
+
     private final String path;
     private final Map<String, String> parameters;
     private final Optional<String> extension;
@@ -27,6 +32,9 @@ public class URI {
         return !parameters.isEmpty();
     }
 
+    public boolean hasExtension() {
+        return extension.isPresent();
+    };
 
 
     public String getPath() {

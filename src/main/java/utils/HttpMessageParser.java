@@ -6,12 +6,10 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static webserver.httpMessage.URI.PARAMETER_SEPARATOR;
-import static webserver.httpMessage.URI.QUERY_SEPARATOR;
+import static webserver.httpMessage.URI.*;
 
 public class HttpMessageParser {
 
-    public static final String SPACE = " ";
 
     public static ByteArrayOutputStream parseHttpResponse(HttpResponse httpResponse) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -35,10 +33,10 @@ public class HttpMessageParser {
 
         for (Map.Entry<String, String> line : headers.entrySet()) {
             stringBuilder.append(line.getKey())
-                    .append(": ")
+                    .append(HEADER_SEPARATOR)
                     .append(StringUtils.appendNewLine(line.getValue()));
         }
-        stringBuilder.append(StringUtils.appendNewLine(""));
+        stringBuilder.append(StringUtils.appendNewLine());
 
         String stringHeader = stringBuilder.toString();
         outputStream.write(stringHeader.getBytes());
@@ -77,7 +75,7 @@ public class HttpMessageParser {
     private static URI parseURI(String stringURI) {
         Map<String, String> parameters = new HashMap<>();
 
-        String[] uriArray = stringURI.split("\\?");
+        String[] uriArray = stringURI.split("\\" + PARAMETER_SEPARATOR);
         String path = uriArray[0];
 
         if (stringURI.contains(QUERY_SEPARATOR)) {
@@ -85,13 +83,13 @@ public class HttpMessageParser {
             List<String> queryList = parseStringToList(query, PARAMETER_SEPARATOR);
 
             for (String line : queryList) {
-                String[] parameter = line.split("=");
+                String[] parameter = line.split(PARAMETER_EQUAL_SIGN);
                 parameters.put(parameter[0], parameter[1]);
             }
         }
 
-        if (path.contains(".")) {
-            int dotIndex = path.lastIndexOf(".");
+        if (path.contains(EXTENSION_SEPARATOR)) {
+            int dotIndex = path.lastIndexOf(EXTENSION_SEPARATOR);
             String extension = path.substring(dotIndex + 1);
 
             return new URI(path, parameters, extension);
@@ -112,7 +110,7 @@ public class HttpMessageParser {
     }
 
     private static List<String> parseRequestLine(String requestLine) {
-        String[] requestLineArray = requestLine.split(" ");
+        String[] requestLineArray = requestLine.split(SPACE);
         List<String> result = Arrays.stream(requestLineArray).collect(Collectors.toList());
 
         return result;
@@ -129,14 +127,10 @@ public class HttpMessageParser {
         Map<String, String> metadata = new HashMap<>();
 
         for (String line : requestHeaderList) {
-            String[] field = line.split(": ?", 2);
+            String[] field = line.split(HEADER_SEPARATOR + QUERY_SEPARATOR, 2);
             metadata.put(field[0], field[1]);
         }
 
         return metadata;
-    }
-
-    private static String removeSpaces(String input) {
-        return input.replaceAll("\\s", "");
     }
 }
