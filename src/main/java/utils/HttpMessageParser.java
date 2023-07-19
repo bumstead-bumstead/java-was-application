@@ -84,7 +84,10 @@ public class HttpMessageParser {
             String query = uriArray[1];
             List<String> queryList = parseStringToList(query, PARAMETER_SEPARATOR);
 
-            parameters = parseHeaders(queryList);
+            for (String line : queryList) {
+                String[] parameter = line.split("=");
+                parameters.put(parameter[0], parameter[1]);
+            }
         }
 
         if (path.contains(".")) {
@@ -126,8 +129,8 @@ public class HttpMessageParser {
         Map<String, String> metadata = new HashMap<>();
 
         for (String line : requestHeaderList) {
-            String[] field = line.split(":", 2);
-            metadata.put(removeSpaces(field[0]), removeSpaces(field[1]));
+            String[] field = line.split(": ?", 2);
+            metadata.put(field[0], field[1]);
         }
 
         return metadata;
