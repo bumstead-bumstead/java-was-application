@@ -79,7 +79,7 @@ public class HttpMessageParser {
             path = stringURI.substring(0, queryStartIndex);
             parameters = parseParameters(stringURI);
         }
-        if (hasExtension(stringURI)) {
+        if (hasExtension(path)) {
             String extension = parseExtension(stringURI);
             return new URI(path, parameters, extension);
         }
