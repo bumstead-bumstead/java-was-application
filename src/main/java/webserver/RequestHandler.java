@@ -1,14 +1,13 @@
 package webserver;
 
-import java.io.*;
-import java.net.Socket;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.HttpMessageParser;
-import webserver.message.HttpRequest;
-import webserver.message.HttpResponse;
-import webserver.message.StatusCode;
+import webserver.httpMessage.HttpRequest;
+import webserver.httpMessage.HttpResponse;
+
+import java.io.*;
+import java.net.Socket;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -28,13 +27,9 @@ public class RequestHandler implements Runnable {
             HttpRequest httpRequest = HttpMessageParser.parseHttpRequest(in);
 
             printHttpRequestHeader(httpRequest);
-
-            //todo : Http Method 별 처리 로직
-            byte[] body = httpRequest.getBytesOfGetRequest();
-            HttpResponse httpResponse = HttpResponse.generateHttpResponse(StatusCode.OK, body);
-
+            HttpResponse httpResponse = RequestRouter.route(httpRequest);
             response(out, httpResponse);
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
         }
     }
@@ -42,6 +37,7 @@ public class RequestHandler implements Runnable {
     private static void response(OutputStream out, HttpResponse httpResponse) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
         ByteArrayOutputStream outputStream = HttpMessageParser.parseHttpResponse(httpResponse);
+
         try {
             dos.write(outputStream.toByteArray());
             dos.flush();
@@ -51,7 +47,7 @@ public class RequestHandler implements Runnable {
     }
 
     private static void printHttpRequestHeader(HttpRequest httpRequest) {
-        logger.debug("method : " + httpRequest.getMethod());
+        logger.debug("method : " + httpRequest.getHttpMethod());
         logger.debug("version : " + httpRequest.getVersion());
         logger.debug("URI : " + httpRequest.getURI());
         logger.debug("headers : " + httpRequest.getHeaders());
