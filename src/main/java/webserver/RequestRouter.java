@@ -29,10 +29,17 @@ public class RequestRouter {
                 uriHandlers.addMapping(handleRequest.path(), method);
             }
         }
-
     }
 
-    public static HttpResponse route(HttpRequest httpRequest) throws InvocationTargetException, IllegalAccessException, IOException {
+    private static class SingletonHelper {
+        private static final RequestRouter REQUEST_ROUTER = new RequestRouter();
+    }
+
+    public static RequestRouter getInstance() {
+        return SingletonHelper.REQUEST_ROUTER;
+    }
+
+    public HttpResponse route(HttpRequest httpRequest) throws InvocationTargetException, IllegalAccessException, IOException {
         HttpMethod httpMethod = httpRequest.getHttpMethod();
         URI uri = httpRequest.getURI();
 
