@@ -60,57 +60,64 @@ public class HttpMessageParser {
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-        List<String> requestHeaderList = parseBufferedReader(bufferedReader);
-        List<String> requestLine = parseRequestLine(requestHeaderList.remove(0));
+        List<String> requestLine = parseRequestLine(bufferedReader);
+        Map<String, String> headers = parseHeaders(bufferedReader);
 
-        HttpMethod method = HttpMethod.valueOf(requestLine.get(0));
+        HttpMethod httpMethod = HttpMethod.valueOf(requestLine.get(0));
         URI uri = parseURI(requestLine.get(1));
         String version = requestLine.get(2);
 
-        Map<String, String> metadata = parseHeaders(requestHeaderList);
-
-        return new HttpRequest(method, uri, version, metadata);
+        return new HttpRequest(httpMethod, uri, version, headers);
     }
 
     private static URI parseURI(String stringURI) {
         Map<String, String> parameters = new HashMap<>();
+        String path = stringURI;
 
-        String[] uriArray = stringURI.split("\\" + PARAMETER_SEPARATOR);
-        String path = uriArray[0];
-
-        if (stringURI.contains(QUERY_SEPARATOR)) {
-            String query = uriArray[1];
-            List<String> queryList = parseStringToList(query, PARAMETER_SEPARATOR);
-
-            for (String line : queryList) {
-                String[] parameter = line.split(PARAMETER_EQUAL_SIGN);
-                parameters.put(parameter[0], parameter[1]);
-            }
+        if (hasQuery(stringURI)) {
+            int queryStartIndex = stringURI.indexOf(QUERY_SEPARATOR);
+            path = stringURI.substring(0, queryStartIndex);
+            parameters = parseParameters(stringURI);
         }
-
-        if (path.contains(EXTENSION_SEPARATOR)) {
-            int dotIndex = path.lastIndexOf(EXTENSION_SEPARATOR);
-            String extension = path.substring(dotIndex + 1);
-
+        if (hasExtension(stringURI)) {
+            String extension = parseExtension(stringURI);
             return new URI(path, parameters, extension);
         }
-
         return new URI(path, parameters);
     }
 
-    private static List<String> parseBufferedReader(BufferedReader bufferedReader) throws IOException {
-        List<String> result = new ArrayList<>();
-        String line = bufferedReader.readLine();
+    private static String parseExtension(String stringURI) {
+        int dotIndex = stringURI.lastIndexOf(EXTENSION_SEPARATOR);
+        String extension = stringURI.substring(dotIndex + 1);
 
-        while (line != null && !line.equals("")) {
-            result.add(line);
-            line = bufferedReader.readLine();
-        }
-        return result;
+        return extension;
     }
 
-    private static List<String> parseRequestLine(String requestLine) {
-        String[] requestLineArray = requestLine.split(SPACE);
+    private static boolean hasExtension(String stringURI) {
+        return stringURI.contains(EXTENSION_SEPARATOR);
+    }
+
+    private static boolean hasQuery(String stringURI) {
+        return stringURI.contains(QUERY_SEPARATOR);
+    }
+
+    private static Map<String, String> parseParameters(String stringUri) {
+        Map<String, String> parameters = new HashMap<>();
+        int queryStartIndex = stringUri.indexOf(QUERY_SEPARATOR) + 1;
+        String query = stringUri.substring(queryStartIndex);
+
+        List<String> queries = parseStringToList(query, PARAMETER_SEPARATOR);
+
+        for (String line : queries) {
+            String[] parameter = line.split(PARAMETER_EQUAL_SIGN);
+            parameters.put(parameter[0], parameter[1]);
+        }
+        return parameters;
+    }
+
+    private static List<String> parseRequestLine(BufferedReader bufferedReader) throws IOException {
+        String stringRequestLine = bufferedReader.readLine();
+        String[] requestLineArray = stringRequestLine.split(SPACE);
         List<String> result = Arrays.stream(requestLineArray).collect(Collectors.toList());
 
         return result;
@@ -123,14 +130,16 @@ public class HttpMessageParser {
         return result;
     }
 
-    private static Map<String, String> parseHeaders(List<String> requestHeaderList) {
-        Map<String, String> metadata = new HashMap<>();
+    private static Map<String, String> parseHeaders(BufferedReader bufferedReader) throws IOException {
+        Map<String, String> headers = new HashMap<>();
+        String line = bufferedReader.readLine();
 
-        for (String line : requestHeaderList) {
+        while (line != null && !line.equals("")) {
             String[] field = line.split(HEADER_SEPARATOR + QUERY_SEPARATOR, 2);
-            metadata.put(field[0], field[1]);
+            headers.put(field[0], field[1]);
+            line = bufferedReader.readLine();
         }
 
-        return metadata;
+        return headers;
     }
 }
