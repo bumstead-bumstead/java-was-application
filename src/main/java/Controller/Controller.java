@@ -6,9 +6,15 @@ import webserver.annotations.HandleRequest;
 import webserver.httpMessage.*;
 
 public class Controller {
+    private static class SingletonHelper {
+        private static final Controller CONTROLLER = new Controller();
+    }
 
+    public static Controller getInstance() {
+        return SingletonHelper.CONTROLLER;
+    }
     @HandleRequest(path = "/user/create", httpMethod = HttpMethod.GET)
-    public static HttpResponse createUser(HttpRequest httpRequest) {
+    public HttpResponse createUser(HttpRequest httpRequest) {
         URI uri = httpRequest.getURI();
         User user = User.of(uri.getParameters());
 

@@ -49,7 +49,7 @@ public class RequestRouter {
         }
 
         Method method = requestMappings.get(httpMethod).getMappedMethod(uri.getPath());
-        HttpResponse httpResponse = (HttpResponse) method.invoke(null, httpRequest);
+        HttpResponse httpResponse = (HttpResponse) method.invoke(Controller.getInstance(), httpRequest);
 
         return httpResponse;
     }
