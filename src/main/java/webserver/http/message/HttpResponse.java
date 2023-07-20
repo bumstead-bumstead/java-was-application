@@ -1,10 +1,10 @@
-package webserver.httpMessage;
+package webserver.http.message;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
-import static webserver.httpMessage.HttpHeaders.*;
+import static webserver.utils.HttpHeaderUtils.*;
 
 public class HttpResponse {
     private final String version;

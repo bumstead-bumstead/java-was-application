@@ -4,7 +4,7 @@ import db.Database;
 import exceptions.IllegalParameterException;
 import model.User;
 import webserver.annotations.HandleRequest;
-import webserver.httpMessage.*;
+import webserver.http.message.*;
 
 public class Controller {
     private static class SingletonHelper {

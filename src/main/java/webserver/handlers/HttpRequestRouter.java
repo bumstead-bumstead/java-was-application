@@ -1,9 +1,10 @@
-package webserver;
+package webserver.handlers;
 
 import Controller.Controller;
 import exceptions.PathNotFoundException;
 import webserver.annotations.HandleRequest;
-import webserver.httpMessage.*;
+import webserver.http.*;
+import webserver.http.message.*;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

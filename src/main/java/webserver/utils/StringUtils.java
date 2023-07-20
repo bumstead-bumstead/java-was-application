@@ -1,4 +1,4 @@
-package utils;
+package webserver.utils;
 
 public class StringUtils {
     private static final String NEWLINE = System.getProperty("line.separator");

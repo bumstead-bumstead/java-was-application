@@ -1,12 +1,12 @@
-package utils;
+package webserver.utils;
 
-import webserver.httpMessage.*;
+import webserver.http.message.*;
 
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static webserver.httpMessage.URI.*;
+import static webserver.http.message.URI.*;
 
 public class HttpMessageParser {
 

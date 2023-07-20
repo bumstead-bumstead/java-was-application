@@ -1,4 +1,4 @@
-package webserver.httpMessage;
+package webserver.http.message;
 
 import java.util.Map;
 import java.util.Objects;

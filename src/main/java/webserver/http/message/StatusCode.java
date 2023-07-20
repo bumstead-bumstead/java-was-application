@@ -1,4 +1,4 @@
-package webserver.httpMessage;
+package webserver.http.message;
 
 public enum StatusCode {
     OK (200, "Ok"),

@@ -1,10 +1,10 @@
-package webserver;
+package webserver.handlers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import utils.HttpMessageParser;
-import webserver.httpMessage.HttpRequest;
-import webserver.httpMessage.HttpResponse;
+import webserver.utils.HttpMessageParser;
+import webserver.http.message.HttpRequest;
+import webserver.http.message.HttpResponse;
 
 import java.io.*;
 import java.net.Socket;

@@ -1,6 +1,6 @@
-package webserver.httpMessage;
+package webserver.http;
 
-import webserver.URIHandlers;
+import webserver.http.message.HttpMethod;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

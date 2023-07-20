@@ -1,6 +1,6 @@
-package webserver.httpMessage;
+package webserver.utils;
 
-public class HttpHeaders {
+public class HttpHeaderUtils {
     public static final String CONTENT_TYPE_HEADER = "Content-Type";
     public static final String CONTENT_LENGTH_HEADER = "Content-Length";
     public static final String DEFAULT_CONTENT_TYPE_VALUE = "text/html;charset=utf-8";

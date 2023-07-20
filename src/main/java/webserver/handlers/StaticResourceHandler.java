@@ -1,4 +1,4 @@
-package webserver;
+package webserver.handlers;
 
 import exceptions.PathNotFoundException;
 

@@ -2,7 +2,8 @@ package utils;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import webserver.httpMessage.*;
+import webserver.http.message.*;
+import webserver.utils.HttpMessageParser;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
