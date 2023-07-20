@@ -8,26 +8,20 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 public class RequestRouter {
-    private static Map<HttpMethod, URIHandlers> requestMappings;
+    private static HttpMethodHandlerMappings requestMappings;
 
     static {
-        requestMappings = new HashMap<>();
-
-        for (HttpMethod httpMethod : HttpMethod.values()) {
-            requestMappings.put(httpMethod, new URIHandlers());
-        }
+        requestMappings = new HttpMethodHandlerMappings();
+        requestMappings.initialize();
 
         Method[] methods = Controller.class.getDeclaredMethods();
 
         for (Method method : methods) {
             if (method.isAnnotationPresent(HandleRequest.class)) {
                 HandleRequest handleRequest = method.getAnnotation(HandleRequest.class);
-                URIHandlers uriHandlers = requestMappings.get(handleRequest.httpMethod());
-                uriHandlers.addMapping(handleRequest.path(), method);
+                requestMappings.addMapping(handleRequest.path(), handleRequest.httpMethod(), method);
             }
         }
     }
@@ -53,7 +47,7 @@ public class RequestRouter {
             }
         }
 
-        Method method = requestMappings.get(httpMethod).getMappedMethod(uri.getPath());
+        Method method = requestMappings.getMappedMethod(uri.getPath(), httpMethod);
         HttpResponse httpResponse = (HttpResponse) method.invoke(Controller.getInstance(), httpRequest);
 
         return httpResponse;
