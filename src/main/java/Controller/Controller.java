@@ -22,7 +22,7 @@ public class Controller {
 
             Database.addUser(user);
         } catch (IllegalParameterException e) {
-            HttpResponse.generateHttpResponse(StatusCode.BAD_REQUEST);
+            return HttpResponse.generateHttpResponse(StatusCode.BAD_REQUEST);
         }
 
         return HttpResponse.generateHttpResponse(StatusCode.OK);
