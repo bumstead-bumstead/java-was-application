@@ -1,14 +1,8 @@
 package webserver.httpMessage;
 
 
-import com.google.common.io.ByteStreams;
-
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
-
-import static webserver.RequestHandler.TEMPLATES_PATH;
 
 public class HttpRequest {
     private final HttpMethod httpMethod;
@@ -37,13 +31,6 @@ public class HttpRequest {
 
     public Map<String, String> getHeaders() {
         return headers;
-    }
-
-    //역할 분리
-    public byte[] getBytesOfGetRequest() throws IOException {
-        FileInputStream fileInputStream = new FileInputStream(TEMPLATES_PATH + this.uri.getPath());
-
-        return ByteStreams.toByteArray(fileInputStream);
     }
 
     @Override

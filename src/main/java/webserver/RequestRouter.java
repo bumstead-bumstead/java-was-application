@@ -4,6 +4,7 @@ import Controller.Controller;
 import webserver.annotations.HandleRequest;
 import webserver.httpMessage.*;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -44,8 +45,12 @@ public class RequestRouter {
         URI uri = httpRequest.getURI();
 
         if (uri.hasExtension()) {
-            byte[] body = httpRequest.getBytesOfGetRequest();
-            return HttpResponse.generateHttpResponse(StatusCode.OK, body);
+            try {
+                byte[] body = StaticResourceHandler.getStaticResource(uri.getPath());
+                return HttpResponse.generateHttpResponse(StatusCode.OK, body);
+            } catch (FileNotFoundException e) {
+                return HttpResponse.generateHttpResponse(StatusCode.NOT_FOUND);
+            }
         }
 
         Method method = requestMappings.get(httpMethod).getMappedMethod(uri.getPath());
