@@ -50,8 +50,8 @@ public class User {
     private static void verifyUserParameters(Map<String, String> parameters) {
         if (!parameters.containsKey("userId")
                 || !parameters.containsKey("password")
-                || parameters.containsKey("name")
-                || parameters.containsKey("email")) {
+                || !parameters.containsKey("name")
+                || !parameters.containsKey("email")) {
             throw new IllegalParameterException();
         }
     }
