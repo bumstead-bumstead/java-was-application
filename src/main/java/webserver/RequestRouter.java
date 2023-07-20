@@ -1,16 +1,17 @@
 package webserver;
 
 import Controller.Controller;
+import exceptions.PathNotFoundException;
 import webserver.annotations.HandleRequest;
 import webserver.httpMessage.*;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class RequestRouter {
-    private static HttpMethodHandlerMappings requestMappings;
+    //set default for test
+    static HttpMethodHandlerMappings requestMappings;
 
     static {
         requestMappings = new HttpMethodHandlerMappings();
@@ -38,18 +39,17 @@ public class RequestRouter {
         HttpMethod httpMethod = httpRequest.getHttpMethod();
         URI uri = httpRequest.getURI();
 
-        if (uri.hasExtension()) {
-            try {
+        try {
+            if (uri.hasExtension()) {
                 byte[] body = StaticResourceHandler.getStaticResource(uri.getPath());
                 return HttpResponse.generateHttpResponse(StatusCode.OK, body);
-            } catch (FileNotFoundException e) {
-                return HttpResponse.generateHttpResponse(StatusCode.NOT_FOUND);
             }
+            Method method = requestMappings.getMappedMethod(uri.getPath(), httpMethod);
+            HttpResponse httpResponse = (HttpResponse) method.invoke(Controller.getInstance(), httpRequest);
+
+            return httpResponse;
+        } catch (PathNotFoundException e) {
+            return HttpResponse.generateHttpResponse(StatusCode.NOT_FOUND);
         }
-
-        Method method = requestMappings.getMappedMethod(uri.getPath(), httpMethod);
-        HttpResponse httpResponse = (HttpResponse) method.invoke(Controller.getInstance(), httpRequest);
-
-        return httpResponse;
     }
 }

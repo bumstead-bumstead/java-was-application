@@ -1,7 +1,8 @@
 package webserver;
 
+import exceptions.PathNotFoundException;
+
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -13,7 +14,7 @@ public class StaticResourceHandler {
         File file = new File(fullPath);
 
         if (!file.exists() || !file.isFile()) {
-            throw new FileNotFoundException("존재하지 않는 리소스 : " + resourcePath);
+            throw new PathNotFoundException();
         }
 
         return Files.readAllBytes(file.toPath());
