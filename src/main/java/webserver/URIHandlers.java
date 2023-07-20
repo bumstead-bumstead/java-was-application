@@ -1,5 +1,7 @@
 package webserver;
 
+import exceptions.PathNotFoundException;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +18,14 @@ public class URIHandlers {
     }
 
     public Method getMappedMethod(String path) {
+        verifyMappedMethodExistence(path);
         return map.get(path);
+    }
+
+    private void verifyMappedMethodExistence(String path) {
+        if (!map.containsKey(path)) {
+            throw new PathNotFoundException();
+        }
     }
 
     @Override
