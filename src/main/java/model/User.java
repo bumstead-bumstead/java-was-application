@@ -2,7 +2,6 @@ package model;
 
 import exceptions.IllegalParameterException;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -13,7 +12,6 @@ public class User {
     private String email;
 
     public User(String userId, String password, String name, String email) {
-
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -54,12 +52,6 @@ public class User {
                 || !parameters.containsKey("email")) {
             throw new IllegalParameterException();
         }
-    }
-
-    public static void main(String[] args) {
-        Map<String, String> map = new HashMap<>();
-
-        System.out.println(map.get("dgs"));
     }
     @Override
     public boolean equals(Object o) {

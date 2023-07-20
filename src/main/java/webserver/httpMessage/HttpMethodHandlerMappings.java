@@ -13,14 +13,6 @@ public class HttpMethodHandlerMappings {
         this.requestMappings = new HashMap<>();
     }
 
-    /*
-    * todo
-    *  1. 초기화
-    *  2. URIHandlers 초기화
-    *  3. Method 반환
-    *  4. Method 넣기
-    * */
-
     public void initialize() {
         for (HttpMethod httpMethod : HttpMethod.values()) {
             requestMappings.put(httpMethod, new URIHandlers());

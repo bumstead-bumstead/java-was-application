@@ -10,11 +10,6 @@ public class StringUtils {
         return result.append(NEWLINE).toString();
     }
 
-    public static String appendNewLine(int integer) {
-        StringBuilder result = new StringBuilder(integer);
-        return result.append(NEWLINE).toString();
-    }
-
     public static String appendNewLine() {
         return NEWLINE;
     }
