@@ -1,6 +1,7 @@
 package Controller;
 
 import db.Database;
+import exceptions.IllegalParameterException;
 import model.User;
 import webserver.annotations.HandleRequest;
 import webserver.httpMessage.*;
@@ -15,11 +16,15 @@ public class Controller {
     }
     @HandleRequest(path = "/user/create", httpMethod = HttpMethod.GET)
     public HttpResponse createUser(HttpRequest httpRequest) {
-        URI uri = httpRequest.getURI();
-        User user = User.of(uri.getParameters());
+        try {
+            URI uri = httpRequest.getURI();
+            User user = User.of(uri.getParameters());
 
-        Database.addUser(user);
+            Database.addUser(user);
+        } catch (IllegalParameterException e) {
+            HttpResponse.generateHttpResponse(StatusCode.BAD_REQUEST);
+        }
 
-        return HttpResponse.generateHttpResponse(StatusCode.OK, new byte[]{});
+        return HttpResponse.generateHttpResponse(StatusCode.OK);
     }
 }

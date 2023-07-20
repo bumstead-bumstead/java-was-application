@@ -1,5 +1,8 @@
 package model;
 
+import exceptions.IllegalParameterException;
+
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -10,6 +13,7 @@ public class User {
     private String email;
 
     public User(String userId, String password, String name, String email) {
+
         this.userId = userId;
         this.password = password;
         this.name = name;
@@ -33,6 +37,8 @@ public class User {
     }
 
     public static User of(Map<String, String> parameters) {
+        verifyUserParameters(parameters);
+
         String userId = parameters.get("userId");
         String password = parameters.get("password");
         String name = parameters.get("name");
@@ -41,6 +47,20 @@ public class User {
         return new User(userId, password, name, email);
     }
 
+    private static void verifyUserParameters(Map<String, String> parameters) {
+        if (!parameters.containsKey("userId")
+                || !parameters.containsKey("password")
+                || parameters.containsKey("name")
+                || parameters.containsKey("email")) {
+            throw new IllegalParameterException();
+        }
+    }
+
+    public static void main(String[] args) {
+        Map<String, String> map = new HashMap<>();
+
+        System.out.println(map.get("dgs"));
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -32,6 +32,10 @@ public class HttpResponse {
         return new HttpResponse(statusCode, body);
     }
 
+    public static HttpResponse generateHttpResponse(StatusCode statusCode) {
+        return new HttpResponse(statusCode, new byte[]{});
+    }
+
     public byte[] getBody() {
         return body;
     }
