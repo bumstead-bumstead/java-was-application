@@ -2,13 +2,16 @@ package webserver;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import webserver.httpMessage.*;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RequestRouterTest {
 
-    private HttpMethodHandlerMappings mockedHandlerMappings;
     RequestRouter requestRouter;
 
     @BeforeEach
@@ -24,16 +26,14 @@ public class RequestRouterTest {
         requestRouter = new RequestRouter();
     }
 
-    @Test
-    @DisplayName("존재하는 정적 리소스를 요청할 시 응답 메세지가 200 OK와 body를 정상적으로 갖는다.")
-    void routeStaticResource() throws IOException, InvocationTargetException, IllegalAccessException {
+    @ParameterizedTest
+    @MethodSource("providePathAndStatusCodeAndBodyForTestingStaticResource")
+    @DisplayName("정적 리소스에 대한 요청 처리 테스트")
+    void routeStaticResource(String path, StatusCode expectedStatusCode, byte[] expectedBody) throws IOException, InvocationTargetException, IllegalAccessException {
         HttpRequest httpRequest = new HttpRequest(HttpMethod.GET,
-                new URI("/exampleForTest.txt", Map.of(), "txt"),
+                new URI(path, Map.of(), "txt"),
                 "HTTP/1.1",
                 new HashMap<>());
-
-        byte[] expectedBody = "test".getBytes();
-        StatusCode expectedStatusCode = StatusCode.OK;
 
         HttpResponse httpResponse = requestRouter.route(httpRequest);
 
@@ -41,64 +41,31 @@ public class RequestRouterTest {
         assertArrayEquals(expectedBody, httpResponse.getBody());
     }
 
-    @Test
-    @DisplayName("존재하지 않는 정적 리소스를 요청할 시 응답 메세지가 NOT FOUND를 갖고 body를 갖지 않는다.")
-    void routeNonexistentStaticResource() throws IOException, InvocationTargetException, IllegalAccessException {
-        HttpRequest httpRequest = new HttpRequest(HttpMethod.GET,
-                new URI("/nonexistent.txt", Map.of(), "txt"),
-                "HTTP/1.1",
-                new HashMap<>());
-
-        StatusCode expectedStatusCode = StatusCode.NOT_FOUND;
-
-        HttpResponse httpResponse = requestRouter.route(httpRequest);
-
-        assertEquals(expectedStatusCode, httpResponse.getStatusCode());
-        assertEquals(0, httpResponse.getBody().length);
+    public static Stream<Arguments> providePathAndStatusCodeAndBodyForTestingStaticResource() {
+        return Stream.of(
+                Arguments.of("/exampleForTest.txt", StatusCode.OK, "test".getBytes()),
+                Arguments.of("/nonexistent.txt", StatusCode.NOT_FOUND, new byte[]{})
+        );
     }
 
-    @Test
-    @DisplayName("유효한 URI와 parameter를 요청하면 200 OK를 보낸다.")
-    void routeRigthURIAndParameter() throws IOException, InvocationTargetException, IllegalAccessException {
+    @ParameterizedTest
+    @MethodSource("providePathAndParametersAndStatusCodeForTestingURIAndParameters")
+    @DisplayName("URI, parameter에 대한 요청 처리 테스트")
+    void routeURIAndParameter(String path, Map<String, String> parameters, StatusCode expectedStatusCode) throws Exception {
         HttpRequest httpRequest = new HttpRequest(HttpMethod.GET,
-                new URI("/user/create",
-                        Map.of("userId", "userId", "password", "password", "name", "name", "email", "email")),
-                        "HTTP/1.1",
-                        new HashMap<>());
-
-        StatusCode expectedStatusCode = StatusCode.OK;
+                new URI(path, parameters),
+                "HTTP/1.1",
+                new HashMap<>());
         HttpResponse httpResponse = requestRouter.route(httpRequest);
 
         assertEquals(expectedStatusCode, httpResponse.getStatusCode());
     }
 
-    @Test
-    @DisplayName("유효하지 않은 URI를 요청하면 Not Found를 보낸다.")
-    void routeWrongURI() throws IOException, InvocationTargetException, IllegalAccessException {
-        HttpRequest httpRequest = new HttpRequest(HttpMethod.GET,
-                new URI("/nonexistent",
-                        Map.of("userId", "userId", "password", "password", "name", "name", "email", "email")),
-                "HTTP/1.1",
-                new HashMap<>());
-
-        StatusCode expectedStatusCode = StatusCode.NOT_FOUND;
-        HttpResponse httpResponse = requestRouter.route(httpRequest);
-
-        assertEquals(expectedStatusCode, httpResponse.getStatusCode());
-    }
-
-    @Test
-    @DisplayName("유효하지 않은 parameter를 요청하면 BAD REQUEST를 보낸다.")
-    void routeWrongParameter() throws IOException, InvocationTargetException, IllegalAccessException {
-        HttpRequest httpRequest = new HttpRequest(HttpMethod.GET,
-                new URI("/user/create",
-                        Map.of("password", "password", "name", "name", "email", "email")),
-                "HTTP/1.1",
-                new HashMap<>());
-
-        StatusCode expectedStatusCode = StatusCode.BAD_REQUEST;
-        HttpResponse httpResponse = requestRouter.route(httpRequest);
-
-        assertEquals(expectedStatusCode, httpResponse.getStatusCode());
+    public static Stream<Arguments> providePathAndParametersAndStatusCodeForTestingURIAndParameters() {
+        return Stream.of(
+                Arguments.of("/user/create", Map.of("userId", "userId", "password", "password", "name", "name", "email", "email"), StatusCode.OK),
+                Arguments.of("/nonexistent", Map.of("userId", "userId", "password", "password", "name", "name", "email", "email"), StatusCode.NOT_FOUND),
+                Arguments.of("/user/create", Map.of("password", "password", "name", "name", "email", "email"), StatusCode.BAD_REQUEST)
+        );
     }
 }
