@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RequestRouterTest {
 
-    RequestRouter requestRouter;
+    HttpRequestRouter requestRouter;
 
     @BeforeEach
     void setUp() {
-        requestRouter = new RequestRouter();
+        requestRouter = new HttpRequestRouter();
     }
 
     @ParameterizedTest

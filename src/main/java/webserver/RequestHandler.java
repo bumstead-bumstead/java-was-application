@@ -26,7 +26,7 @@ public class RequestHandler implements Runnable {
             HttpRequest httpRequest = HttpMessageParser.parseHttpRequest(in);
 
             printHttpRequestHeader(httpRequest);
-            HttpResponse httpResponse = RequestRouter.getInstance().route(httpRequest);
+            HttpResponse httpResponse = HttpRequestRouter.getInstance().route(httpRequest);
             response(out, httpResponse);
         } catch (Exception e) {
             logger.error(e.getMessage());

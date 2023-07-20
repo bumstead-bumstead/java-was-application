@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class RequestRouter {
+public class HttpRequestRouter {
     //set default for test
     static HttpMethodHandlerMappings requestMappings;
 
@@ -28,10 +28,10 @@ public class RequestRouter {
     }
 
     private static class SingletonHelper {
-        private static final RequestRouter REQUEST_ROUTER = new RequestRouter();
+        private static final HttpRequestRouter REQUEST_ROUTER = new HttpRequestRouter();
     }
 
-    public static RequestRouter getInstance() {
+    public static HttpRequestRouter getInstance() {
         return SingletonHelper.REQUEST_ROUTER;
     }
 
