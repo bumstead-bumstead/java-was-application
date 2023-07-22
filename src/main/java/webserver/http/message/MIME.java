@@ -7,7 +7,9 @@ public enum MIME {
     ICO("image/x-icon"),
     PNG("image/png"),
     JPG("image/jpeg"),
-    TXT("text/plain");
+    TXT("text/plain"),
+    WOFF("font/WOFF"),
+    TTF("font/ttf");
 
     public String contentType;
 
