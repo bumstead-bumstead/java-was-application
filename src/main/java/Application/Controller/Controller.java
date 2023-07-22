@@ -1,13 +1,15 @@
 package Application.Controller;
 
 import Application.db.Database;
-import webserver.exceptions.BadRequestException;
 import Application.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.annotations.HandleRequest;
 import webserver.annotations.QueryParameter;
-import webserver.http.message.*;
+import webserver.exceptions.BadRequestException;
+import webserver.http.message.HttpMethod;
+import webserver.http.message.HttpResponse;
+import webserver.http.message.StatusCode;
 import webserver.utils.HttpHeaderUtils;
 
 import java.util.Map;
@@ -23,14 +25,12 @@ public class Controller {
         return SingletonHelper.CONTROLLER;
     }
 
-    @HandleRequest(path = "/user/create", httpMethod = HttpMethod.GET)
+    @HandleRequest(path = "/user/create", httpMethod = HttpMethod.POST)
     public HttpResponse createUser(@QueryParameter(key = "userId") String userId,
-                                   @QueryParameter(key = "password")String password,
+                                   @QueryParameter(key = "password") String password,
                                    @QueryParameter(key = "name") String name,
-                                   @QueryParameter(key = "email") String email /*HttpRequest httpRequest*/) {
+                                   @QueryParameter(key = "email") String email) {
         try {
-//            URI uri = httpRequest.getURI();
-//            User user = User.of(uri.getParameters());
             User user = new User(userId, password, name, email);
             Database.addUser(user);
         } catch (BadRequestException e) {
