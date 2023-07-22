@@ -25,7 +25,10 @@ public class StaticResourceHandler {
                 HttpHeaderUtils.CONTENT_LENGTH_HEADER,
                 String.valueOf(body.length));
 
-        return HttpResponse.generateHttpResponse(StatusCode.OK, headers, body);
+        return new HttpResponse.Builder()
+                .headers(headers)
+                .body(body)
+                .build();
     }
 
     private static byte[] getResource(URI uri) throws IOException {

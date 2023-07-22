@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.annotations.HandleRequest;
 import webserver.http.message.*;
+import webserver.utils.HttpHeaderUtils;
 
 import java.util.Map;
 
@@ -30,10 +31,15 @@ public class Controller {
             Database.addUser(user);
         } catch (BadRequestException e) {
             logger.error(e.getMessage());
-            return HttpResponse.generateHttpResponse(StatusCode.BAD_REQUEST);
+            return new HttpResponse.Builder()
+                    .statusCode(StatusCode.BAD_REQUEST)
+                    .build();
         }
 
-        return HttpResponse.generateHttpResponse(StatusCode.FOUND, Map.of("Location", "http://localhost:8080/index.html"));
+        return new HttpResponse.Builder()
+                .statusCode(StatusCode.FOUND)
+                .headers(Map.of(HttpHeaderUtils.LOCATION_HEADER, "http://localhost:8080/index.html"))
+                .build();
     }
 }
 

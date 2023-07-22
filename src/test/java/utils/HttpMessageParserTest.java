@@ -21,7 +21,7 @@ class HttpMessageParserTest {
     @DisplayName("HttpResponse to OutputStream 파싱 로직 테스트")
     void parseHttpResponse() throws IOException {
         //given
-        HttpResponse httpResponse = new HttpResponse(StatusCode.OK, new byte[0]);
+        HttpResponse httpResponse = new HttpResponse.Builder().build();//new HttpResponse(StatusCode.OK, new byte[0]);
 
         //when
         OutputStream outputStream = HttpMessageParser.parseHttpResponse(httpResponse);
