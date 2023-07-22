@@ -3,15 +3,19 @@ package webserver;
 import exceptions.PathNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import webserver.handlers.StaticResourceHandler;
-import webserver.http.message.MIME;
-import webserver.http.message.URI;
+import webserver.http.message.*;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+import static webserver.handlers.StaticResourceHandler.handle;
+import static webserver.utils.HttpHeaderUtils.CONTENT_TYPE_HEADER;
 public class StaticResourceHandlerTest {
 
     @Test
@@ -32,5 +36,30 @@ public class StaticResourceHandlerTest {
         assertThrows(PathNotFoundException.class, () -> {
             StaticResourceHandler.getResourceForTest(uri);
         });
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideContentTypeForTestingHandle")
+    @DisplayName("요청 URI의 확장자에 따라서 응답의 ContentType을 변경한다.")
+    void handleTest(String path, MIME mime) throws IOException {
+        HttpRequest httpRequest = new HttpRequest(HttpMethod.GET,
+                new URI(path,
+                        Map.of(),
+                        mime),
+                "HTTP/1.1",
+                Map.of());
+
+        HttpResponse httpResponse = handle(httpRequest);
+        Map<String, String> headers = httpResponse.getHeaders();
+        assertEquals(headers.get(CONTENT_TYPE_HEADER), mime.contentType);
+    }
+
+    public static Stream<Arguments> provideContentTypeForTestingHandle() {
+        return Stream.of(
+                Arguments.of("/css/styles.css", MIME.CSS),
+                Arguments.of("/fonts/glyphicons-halflings-regular.woff", MIME.WOFF),
+                Arguments.of("/images/80-text.png", MIME.PNG),
+                Arguments.of("/favicon.ico", MIME.ICO)
+        );
     }
 }
