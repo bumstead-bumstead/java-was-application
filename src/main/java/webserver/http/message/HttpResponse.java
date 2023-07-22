@@ -1,5 +1,7 @@
 package webserver.http.message;
 
+import webserver.utils.HttpHeaderUtils;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -14,10 +16,10 @@ public class HttpResponse {
 
     private final byte[] body;
 
-    private HttpResponse(String version, StatusCode statusCode, Map<String, String> metadata, byte[] body) {
+    private HttpResponse(String version, StatusCode statusCode, Map<String, String> headers, byte[] body) {
         this.version = version;
         this.statusCode = statusCode;
-        this.headers = metadata;
+        this.headers = headers;
         this.body = body;
     }
 
@@ -34,6 +36,10 @@ public class HttpResponse {
 
     public static HttpResponse generateHttpResponse(StatusCode statusCode) {
         return new HttpResponse(statusCode, new byte[]{});
+    }
+
+    public static HttpResponse generateHttpResponse(StatusCode statusCode, Map<String, String> headers) {
+        return new HttpResponse(HttpHeaderUtils.DEFAULT_HTTP_VERSION, statusCode, headers, new byte[]{});
     }
 
     public byte[] getBody() {

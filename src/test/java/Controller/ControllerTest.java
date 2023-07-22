@@ -10,6 +10,7 @@ import webserver.http.message.*;
 
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ControllerTest {
@@ -32,11 +33,12 @@ class ControllerTest {
         }
 
         @Test
-        @DisplayName("올바른 입력에 대해서 응답으로 200번 코드를 보낸다.")
+        @DisplayName("올바른 입력에 대해서 응답으로 302번 코드를 보낸다.")
         void receive200() {
             HttpResponse httpResponse = controller.createUser(httpRequest);
 
-            assertEquals(httpResponse.getStatusCode(), StatusCode.OK);
+            assertEquals(httpResponse.getStatusCode(), StatusCode.FOUND);
+            assertThat(httpResponse.getHeaders().containsKey("Location"));
         }
 
         @Test
