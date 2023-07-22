@@ -4,7 +4,7 @@ import Application.Controller.Controller;
 import webserver.exceptions.BadRequestException;
 import webserver.exceptions.PathNotFoundException;
 import webserver.annotations.HandleRequest;
-import webserver.annotations.QueryParameter;
+import webserver.annotations.PathParameter;
 import webserver.http.HttpMethodHandlerMapping;
 import webserver.http.message.*;
 
@@ -73,17 +73,17 @@ public class HttpRequestRouter {
 
     private Object[] extractParameterValues(Method method, Map<String, String> inputs) throws BadRequestException {
         List<Parameter> parameters = Arrays.stream(method.getParameters())
-                .filter(parameter -> parameter.isAnnotationPresent(QueryParameter.class))
+                .filter(parameter -> parameter.isAnnotationPresent(PathParameter.class))
                 .collect(Collectors.toList());
 
         verifyParameterExistence(inputs, parameters);
 
-        return parameters.stream().map(parameter -> inputs.get(parameter.getAnnotation(QueryParameter.class).key())).toArray();
+        return parameters.stream().map(parameter -> inputs.get(parameter.getAnnotation(PathParameter.class).key())).toArray();
     }
 
     private static void verifyParameterExistence(Map<String, String> inputs, List<Parameter> parameters) throws BadRequestException {
         for (Parameter parameter : parameters) {
-            if (!inputs.containsKey(parameter.getAnnotation(QueryParameter.class).key())) {
+            if (!inputs.containsKey(parameter.getAnnotation(PathParameter.class).key())) {
                 throw new BadRequestException("유효하지 않은 매개 변수");
             }
         }
