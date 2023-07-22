@@ -63,7 +63,7 @@ public class RequestRouterTest {
 
     public static Stream<Arguments> providePathAndParametersAndStatusCodeForTestingURIAndParameters() {
         return Stream.of(
-                Arguments.of("/user/create", Map.of("userId", "userId", "password", "password", "name", "name", "email", "email"), StatusCode.OK),
+                Arguments.of("/user/create", Map.of("userId", "userId", "password", "password", "name", "name", "email", "email"), StatusCode.FOUND),
                 Arguments.of("/nonexistent", Map.of("userId", "userId", "password", "password", "name", "name", "email", "email"), StatusCode.NOT_FOUND),
                 Arguments.of("/user/create", Map.of("password", "password", "name", "name", "email", "email"), StatusCode.BAD_REQUEST)
         );
