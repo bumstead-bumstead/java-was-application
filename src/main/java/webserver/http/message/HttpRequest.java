@@ -1,5 +1,6 @@
 package webserver.http.message;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -8,6 +9,37 @@ public class HttpRequest {
     private final URI uri;
     private final String version;
     private final Map<String, String> headers;
+
+    public class Builder {
+        private HttpMethod httpMethod;
+        private URI uri;
+        private String version;
+        private Map<String, String> headers;
+
+        public Builder httpMethod(HttpMethod httpMethod) {
+            this.httpMethod = httpMethod;
+            return this;
+        }
+
+        public Builder URI(URI uri) {
+            this.uri = uri;
+            return this;
+        }
+
+        public Builder version(String version) {
+            this.version = version;
+            return this;
+        }
+
+        public Builder headers(Map<String, String> headers) {
+            this.headers = new HashMap<>(headers);
+            return this;
+        }
+
+        public HttpRequest build() {
+            return new HttpRequest(httpMethod, uri, version, headers);
+        }
+    }
 
     public HttpRequest(HttpMethod method, URI uri, String version, Map<String, String> headers) {
         this.httpMethod = method;
