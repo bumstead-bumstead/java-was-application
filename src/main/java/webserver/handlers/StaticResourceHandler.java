@@ -1,14 +1,13 @@
 package webserver.handlers;
 
 import exceptions.PathNotFoundException;
-import webserver.http.message.HttpRequest;
-import webserver.http.message.HttpResponse;
-import webserver.http.message.StatusCode;
-import webserver.http.message.URI;
+import webserver.http.message.*;
+import webserver.utils.HttpHeaderUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Map;
 
 public class StaticResourceHandler {
     public static final String PROJECT_ROOT_PATH = System.getProperty("user.dir");
@@ -16,9 +15,17 @@ public class StaticResourceHandler {
     public static final String STATIC_PATH = "/src/main/resources/static";
 
     public static HttpResponse handle(HttpRequest httpRequest) throws IOException {
-        byte[] body = getResource(httpRequest.getURI());
+        URI uri = httpRequest.getURI();
 
-        return HttpResponse.generateHttpResponse(StatusCode.OK, body);
+        byte[] body = getResource(uri);
+        MIME mime = uri.getExtension().get();
+
+        Map<String, String> headers = Map.of(HttpHeaderUtils.CONTENT_TYPE_HEADER,
+                mime.contentType,
+                HttpHeaderUtils.CONTENT_LENGTH_HEADER,
+                String.valueOf(body.length));
+
+        return HttpResponse.generateHttpResponse(StatusCode.OK, headers, body);
     }
 
     private static byte[] getResource(URI uri) throws IOException {

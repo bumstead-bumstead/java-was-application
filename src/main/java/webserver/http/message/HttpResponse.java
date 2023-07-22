@@ -42,6 +42,10 @@ public class HttpResponse {
         return new HttpResponse(HttpHeaderUtils.DEFAULT_HTTP_VERSION, statusCode, headers, new byte[]{});
     }
 
+    public static HttpResponse generateHttpResponse(StatusCode statusCode, Map<String, String> headers, byte[] body) {
+        return new HttpResponse(DEFAULT_HTTP_VERSION, statusCode, headers, body);
+    }
+
     public byte[] getBody() {
         return body;
     }
