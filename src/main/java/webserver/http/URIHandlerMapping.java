@@ -17,12 +17,12 @@ public class URIHandlerMapping {
         map.put(path, method);
     }
 
-    public Method getMappedMethod(String path) {
+    public Method getMappedMethod(String path) throws PathNotFoundException {
         verifyMappedMethodExistence(path);
         return map.get(path);
     }
 
-    private void verifyMappedMethodExistence(String path) {
+    private void verifyMappedMethodExistence(String path) throws PathNotFoundException {
         if (!map.containsKey(path)) {
             throw new PathNotFoundException();
         }

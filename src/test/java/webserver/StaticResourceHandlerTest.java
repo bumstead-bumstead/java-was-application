@@ -20,7 +20,7 @@ public class StaticResourceHandlerTest {
 
     @Test
     @DisplayName("존재하는 경로의 정적 리소스의 경우 바이트 파일을 반환한다.")
-    void getStaticResourceExisting() throws IOException {
+    void getStaticResourceExisting() throws IOException, PathNotFoundException {
         String resourcePath = "/exampleForTest.txt";
         URI uri = new URI(resourcePath, Map.of(), MIME.TXT);
         byte[] content = StaticResourceHandler.getResourceForTest(uri);
@@ -41,7 +41,7 @@ public class StaticResourceHandlerTest {
     @ParameterizedTest
     @MethodSource("provideContentTypeForTestingHandle")
     @DisplayName("요청 URI의 확장자에 따라서 응답의 ContentType을 변경한다.")
-    void handleTest(String path, MIME mime) throws IOException {
+    void handleTest(String path, MIME mime) throws IOException, PathNotFoundException {
 
         HttpRequest httpRequest = new HttpRequest.Builder()
                 .httpMethod(HttpMethod.GET)

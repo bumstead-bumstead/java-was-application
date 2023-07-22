@@ -1,5 +1,6 @@
 package webserver.http;
 
+import webserver.exceptions.PathNotFoundException;
 import webserver.http.message.HttpMethod;
 
 import java.lang.reflect.Method;
@@ -24,7 +25,7 @@ public class HttpMethodHandlerMapping {
         uriHandlers.addMapping(path, method);
     }
 
-    public Method getMappedMethod(String path, HttpMethod httpMethod) {
+    public Method getMappedMethod(String path, HttpMethod httpMethod) throws PathNotFoundException {
         URIHandlerMapping uriHandlers = requestMappings.get(httpMethod);
 
         return uriHandlers.getMappedMethod(path);
