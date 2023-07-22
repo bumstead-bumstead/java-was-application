@@ -35,23 +35,12 @@ public class User {
     }
 
     public static User of(Map<String, String> parameters) throws BadRequestException {
-        verifyUserParameters(parameters);
-
         String userId = parameters.get("userId");
         String password = parameters.get("password");
         String name = parameters.get("name");
         String email = parameters.get("email");
 
         return new User(userId, password, name, email);
-    }
-
-    private static void verifyUserParameters(Map<String, String> parameters) throws BadRequestException {
-        if (!parameters.containsKey("userId")
-                || !parameters.containsKey("password")
-                || !parameters.containsKey("name")
-                || !parameters.containsKey("email")) {
-            throw new BadRequestException("유효하지 않은 쿼리 매개변수");
-        }
     }
     @Override
     public boolean equals(Object o) {

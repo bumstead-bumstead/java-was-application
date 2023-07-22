@@ -6,6 +6,7 @@ import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.annotations.HandleRequest;
+import webserver.annotations.QueryParameter;
 import webserver.http.message.*;
 import webserver.utils.HttpHeaderUtils;
 
@@ -23,11 +24,14 @@ public class Controller {
     }
 
     @HandleRequest(path = "/user/create", httpMethod = HttpMethod.GET)
-    public HttpResponse createUser(HttpRequest httpRequest) {
+    public HttpResponse createUser(@QueryParameter(key = "userId") String userId,
+                                   @QueryParameter(key = "password")String password,
+                                   @QueryParameter(key = "name") String name,
+                                   @QueryParameter(key = "email") String email /*HttpRequest httpRequest*/) {
         try {
-            URI uri = httpRequest.getURI();
-            User user = User.of(uri.getParameters());
-
+//            URI uri = httpRequest.getURI();
+//            User user = User.of(uri.getParameters());
+            User user = new User(userId, password, name, email);
             Database.addUser(user);
         } catch (BadRequestException e) {
             logger.error(e.getMessage());
