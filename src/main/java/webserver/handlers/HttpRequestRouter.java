@@ -42,9 +42,10 @@ public class HttpRequestRouter {
 
         try {
             if (uri.hasExtension()) {
-                byte[] body = StaticResourceHandler.getStaticResource(uri.getPath());
-                return HttpResponse.generateHttpResponse(StatusCode.OK, body);
+                HttpResponse httpResponse = StaticResourceHandler.handle(httpRequest);
+                return httpResponse;
             }
+
             Method method = requestMappings.getMappedMethod(uri.getPath(), httpMethod);
             HttpResponse httpResponse = (HttpResponse) method.invoke(Controller.getInstance(), httpRequest);
 

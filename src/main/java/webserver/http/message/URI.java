@@ -28,6 +28,10 @@ public class URI {
         this.extension = Optional.of(extension);
     }
 
+    public boolean hasMIMEForStaticResource() {
+        return extension.isPresent() && !extension.get().isTemplate();
+    }
+
     public boolean hasParameter() {
         return !parameters.isEmpty();
     }

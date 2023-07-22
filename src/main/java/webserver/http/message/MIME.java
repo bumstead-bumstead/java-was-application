@@ -14,4 +14,8 @@ public enum MIME {
     MIME(String contentType) {
         this.contentType = contentType;
     }
+
+    public boolean isTemplate() {
+        return this.equals(MIME.HTML) || this.equals(MIME.TXT);
+    }
 }
