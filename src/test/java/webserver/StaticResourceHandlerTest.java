@@ -42,12 +42,12 @@ public class StaticResourceHandlerTest {
     @MethodSource("provideContentTypeForTestingHandle")
     @DisplayName("요청 URI의 확장자에 따라서 응답의 ContentType을 변경한다.")
     void handleTest(String path, MIME mime) throws IOException {
-        HttpRequest httpRequest = new HttpRequest(HttpMethod.GET,
-                new URI(path,
-                        Map.of(),
-                        mime),
-                "HTTP/1.1",
-                Map.of());
+
+        HttpRequest httpRequest = new HttpRequest.Builder()
+                .httpMethod(HttpMethod.GET)
+                .URI(new URI(path, Map.of(), mime))
+                .version("HTTP/1.1")
+                .build();
 
         HttpResponse httpResponse = handle(httpRequest);
         Map<String, String> headers = httpResponse.getHeaders();

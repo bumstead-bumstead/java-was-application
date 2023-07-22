@@ -11,7 +11,6 @@ import webserver.http.message.*;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -32,10 +31,11 @@ public class RequestRouterTest {
     @MethodSource("providePathAndStatusCodeAndBodyForTestingStaticResource")
     @DisplayName("정적 리소스에 대한 요청 처리 테스트")
     void routeStaticResource(String path, StatusCode expectedStatusCode, byte[] expectedBody) throws IOException, InvocationTargetException, IllegalAccessException {
-        HttpRequest httpRequest = new HttpRequest(HttpMethod.GET,
-                new URI(path, Map.of(), MIME.TXT),
-                "HTTP/1.1",
-                new HashMap<>());
+        HttpRequest httpRequest = new HttpRequest.Builder()
+                .httpMethod(HttpMethod.GET)
+                .URI(new URI(path, Map.of(), MIME.TXT))
+                .version("HTTP/1.1")
+                .build();
 
         HttpResponse httpResponse = requestRouter.route(httpRequest);
 
@@ -54,10 +54,12 @@ public class RequestRouterTest {
     @MethodSource("providePathAndParametersAndStatusCodeForTestingURIAndParameters")
     @DisplayName("URI, parameter에 대한 요청 처리 테스트")
     void routeURIAndParameter(String path, Map<String, String> parameters, StatusCode expectedStatusCode) throws Exception {
-        HttpRequest httpRequest = new HttpRequest(HttpMethod.GET,
-                new URI(path, parameters),
-                "HTTP/1.1",
-                new HashMap<>());
+        HttpRequest httpRequest = new HttpRequest.Builder()
+                .httpMethod(HttpMethod.GET)
+                .URI(new URI(path, parameters))
+                .version("HTTP/1.1")
+                .build();
+
         HttpResponse httpResponse = requestRouter.route(httpRequest);
 
         assertEquals(expectedStatusCode, httpResponse.getStatusCode());
