@@ -119,7 +119,7 @@ public class HttpMessageParser {
         return stringURI.contains(QUERY_SEPARATOR);
     }
 
-    private static Map<String, String> parseParameters(String stringUri) {
+    public static Map<String, String> parseParameters(String stringUri) {
         Map<String, String> parameters = new HashMap<>();
         int queryStartIndex = stringUri.indexOf(QUERY_SEPARATOR) + 1;
         String query = stringUri.substring(queryStartIndex);
