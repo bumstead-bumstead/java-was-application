@@ -34,10 +34,11 @@ class ControllerTest {
 
         @Test
         @DisplayName("올바른 입력에 대해서 응답으로 302번 코드를 보낸다.")
-        void receive200() {
+        void createUserTest() {
+            Database.clear();
             HttpResponse httpResponse = controller.createUser(httpRequest);
 
-            assertEquals(httpResponse.getStatusCode(), StatusCode.FOUND);
+            assertEquals(StatusCode.FOUND, httpResponse.getStatusCode());
             assertThat(httpResponse.getHeaders().containsKey("Location"));
         }
 

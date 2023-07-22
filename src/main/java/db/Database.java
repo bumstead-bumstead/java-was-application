@@ -15,6 +15,10 @@ public class Database {
         verifyDuplicatedInput(existingUser);
     }
 
+    public static void clear() {
+        users.clear();
+    }
+
     private static void verifyDuplicatedInput(User existingUser) throws BadRequestException {
         if (existingUser != null) {
             throw new BadRequestException("이미 존재하는 유저 정보");
