@@ -81,7 +81,7 @@ public class HttpMessageParser {
         }
         if (hasExtension(path)) {
             String extension = parseExtension(stringURI);
-            return new URI(path, parameters, extension);
+            return new URI(path, parameters, MIME.valueOf(extension));
         }
         return new URI(path, parameters);
     }

@@ -31,7 +31,7 @@ public class RequestRouterTest {
     @DisplayName("정적 리소스에 대한 요청 처리 테스트")
     void routeStaticResource(String path, StatusCode expectedStatusCode, byte[] expectedBody) throws IOException, InvocationTargetException, IllegalAccessException {
         HttpRequest httpRequest = new HttpRequest(HttpMethod.GET,
-                new URI(path, Map.of(), "txt"),
+                new URI(path, Map.of(), MIME.TXT),
                 "HTTP/1.1",
                 new HashMap<>());
 
