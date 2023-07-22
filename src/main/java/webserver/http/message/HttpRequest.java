@@ -63,6 +63,10 @@ public class HttpRequest {
         this.body = body;
     }
 
+    public boolean containsBody() {
+        return body.length() != 0;
+    }
+
     public HttpMethod getHttpMethod() {
         return httpMethod;
     }
