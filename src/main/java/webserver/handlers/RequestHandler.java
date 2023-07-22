@@ -45,10 +45,13 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private static void printHttpRequestHeader(HttpRequest httpRequest) {
+    private synchronized static void printHttpRequestHeader(HttpRequest httpRequest) {
+        logger.debug("============================request alived=============================");
         logger.debug("method : " + httpRequest.getHttpMethod());
         logger.debug("version : " + httpRequest.getVersion());
         logger.debug("URI : " + httpRequest.getURI());
         logger.debug("headers : " + httpRequest.getHeaders());
+        logger.debug("body : " + httpRequest.getBody());
+        logger.debug("=======================================================================");
     }
 }
