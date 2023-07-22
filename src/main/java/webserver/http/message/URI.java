@@ -38,11 +38,17 @@ public class URI {
 
     public boolean hasExtension() {
         return extension.isPresent();
-    };
+    }
+
+    ;
 
 
     public String getPath() {
         return path;
+    }
+
+    public Optional<MIME> getExtension() {
+        return extension;
     }
 
     public Map<String, String> getParameters() {
