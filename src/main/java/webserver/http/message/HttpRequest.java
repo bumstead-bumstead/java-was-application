@@ -9,13 +9,15 @@ public class HttpRequest {
     private final URI uri;
     private final String version;
     private final Map<String, String> headers;
+    private final String body;
 
-    public class Builder {
+    public static class Builder {
+
         private HttpMethod httpMethod;
         private URI uri;
         private String version;
         private Map<String, String> headers;
-
+        private String body;
         public Builder httpMethod(HttpMethod httpMethod) {
             this.httpMethod = httpMethod;
             return this;
@@ -36,16 +38,29 @@ public class HttpRequest {
             return this;
         }
 
-        public HttpRequest build() {
-            return new HttpRequest(httpMethod, uri, version, headers);
+        public Builder body(String body) {
+            this.body = body;
+            return this;
         }
-    }
 
-    public HttpRequest(HttpMethod method, URI uri, String version, Map<String, String> headers) {
+        public HttpRequest build() {
+            if (body == null) {
+                body = "";
+            }
+            if (headers == null) {
+                headers = Map.of();
+            }
+
+            return new HttpRequest(httpMethod, uri, version, headers, body);
+        }
+
+    }
+    public HttpRequest(HttpMethod method, URI uri, String version, Map<String, String> headers, String body) {
         this.httpMethod = method;
         this.uri = uri;
         this.version = version;
         this.headers = headers;
+        this.body = body;
     }
 
     public HttpMethod getHttpMethod() {
@@ -62,6 +77,10 @@ public class HttpRequest {
 
     public Map<String, String> getHeaders() {
         return headers;
+    }
+
+    public String getBody() {
+        return body;
     }
 
     @Override

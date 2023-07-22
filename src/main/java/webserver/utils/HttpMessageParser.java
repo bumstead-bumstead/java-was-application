@@ -57,17 +57,35 @@ public class HttpMessageParser {
     }
 
     public static HttpRequest parseHttpRequest(InputStream inputStream) throws IOException {
+        HttpRequest.Builder httpRequestBuilder = new HttpRequest.Builder();
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
         List<String> requestLine = parseRequestLine(bufferedReader);
         Map<String, String> headers = parseHeaders(bufferedReader);
 
+        if (headers.containsKey(HttpHeaderUtils.CONTENT_LENGTH_HEADER)) {
+            int contentLength = Integer.parseInt(headers.get(HttpHeaderUtils.CONTENT_LENGTH_HEADER));
+            String body = parseBody(bufferedReader, contentLength);
+            httpRequestBuilder.body(body);
+        }
+
         HttpMethod httpMethod = HttpMethod.valueOf(requestLine.get(0));
         URI uri = parseURI(requestLine.get(1));
         String version = requestLine.get(2);
 
-        return new HttpRequest(httpMethod, uri, version, headers);
+        return httpRequestBuilder
+                .URI(uri)
+                .version(version)
+                .httpMethod(httpMethod)
+                .build();
+    }
+
+    private static String parseBody(BufferedReader bufferedReader, int contentLength) throws IOException {
+        char[] buffer = new char[contentLength];
+        bufferedReader.read(buffer, 0, contentLength);
+
+        return new String(buffer);
     }
 
     private static URI parseURI(String stringURI) {
