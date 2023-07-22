@@ -1,14 +1,18 @@
 package Controller;
 
 import db.Database;
-import exceptions.IllegalParameterException;
+import exceptions.BadRequestException;
 import model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import webserver.annotations.HandleRequest;
 import webserver.http.message.*;
 
 import java.util.Map;
 
 public class Controller {
+    private static final Logger logger = LoggerFactory.getLogger(Controller.class);
+
     private static class SingletonHelper {
         private static final Controller CONTROLLER = new Controller();
     }
@@ -24,7 +28,8 @@ public class Controller {
             User user = User.of(uri.getParameters());
 
             Database.addUser(user);
-        } catch (IllegalParameterException e) {
+        } catch (BadRequestException e) {
+            logger.error(e.getMessage());
             return HttpResponse.generateHttpResponse(StatusCode.BAD_REQUEST);
         }
 

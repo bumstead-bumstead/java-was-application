@@ -1,6 +1,6 @@
 package model;
 
-import exceptions.IllegalParameterException;
+import exceptions.BadRequestException;
 
 import java.util.Map;
 import java.util.Objects;
@@ -34,7 +34,7 @@ public class User {
         return email;
     }
 
-    public static User of(Map<String, String> parameters) {
+    public static User of(Map<String, String> parameters) throws BadRequestException {
         verifyUserParameters(parameters);
 
         String userId = parameters.get("userId");
@@ -45,12 +45,12 @@ public class User {
         return new User(userId, password, name, email);
     }
 
-    private static void verifyUserParameters(Map<String, String> parameters) {
+    private static void verifyUserParameters(Map<String, String> parameters) throws BadRequestException {
         if (!parameters.containsKey("userId")
                 || !parameters.containsKey("password")
                 || !parameters.containsKey("name")
                 || !parameters.containsKey("email")) {
-            throw new IllegalParameterException();
+            throw new BadRequestException("유효하지 않은 쿼리 매개변수");
         }
     }
     @Override
