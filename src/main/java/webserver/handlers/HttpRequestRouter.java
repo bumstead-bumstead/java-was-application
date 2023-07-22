@@ -1,12 +1,17 @@
 package webserver.handlers;
 
 import Application.Controller.Controller;
-import webserver.exceptions.BadRequestException;
-import webserver.exceptions.PathNotFoundException;
 import webserver.annotations.HandleRequest;
 import webserver.annotations.PathParameter;
+import webserver.annotations.QueryParameter;
+import webserver.exceptions.BadRequestException;
+import webserver.exceptions.PathNotFoundException;
 import webserver.http.HttpMethodHandlerMapping;
-import webserver.http.message.*;
+import webserver.http.message.HttpRequest;
+import webserver.http.message.HttpResponse;
+import webserver.http.message.StatusCode;
+import webserver.http.message.URI;
+import webserver.utils.HttpMessageParser;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -44,7 +49,7 @@ public class HttpRequestRouter {
     }
 
     public HttpResponse route(HttpRequest httpRequest) throws InvocationTargetException, IllegalAccessException, IOException {
-        HttpMethod httpMethod = httpRequest.getHttpMethod();
+        Map<String, String> queryParameters = getQueryParameters(httpRequest);
         URI uri = httpRequest.getURI();
 
         try {
@@ -53,11 +58,9 @@ public class HttpRequestRouter {
                 return httpResponse;
             }
 
-            Method method = requestMappings.getMappedMethod(uri.getPath(), httpMethod);
-
-            Object[] parameters = extractParameterValues(method, uri.getParameters());
-
-            HttpResponse httpResponse = (HttpResponse) method.invoke(Controller.getInstance(), parameters);
+            Method method = requestMappings.getMappedMethod(uri.getPath(), httpRequest.getHttpMethod());
+            Object[] argumentValues = extractParameterValues(method, uri.getParameters(), queryParameters);
+            HttpResponse httpResponse = (HttpResponse) method.invoke(Controller.getInstance(), argumentValues);
 
             return httpResponse;
         } catch (PathNotFoundException e) {
@@ -71,19 +74,47 @@ public class HttpRequestRouter {
         }
     }
 
-    private Object[] extractParameterValues(Method method, Map<String, String> inputs) throws BadRequestException {
-        List<Parameter> parameters = Arrays.stream(method.getParameters())
-                .filter(parameter -> parameter.isAnnotationPresent(PathParameter.class))
-                .collect(Collectors.toList());
-
-        verifyParameterExistence(inputs, parameters);
-
-        return parameters.stream().map(parameter -> inputs.get(parameter.getAnnotation(PathParameter.class).key())).toArray();
+    private static Map<String, String> getQueryParameters(HttpRequest httpRequest) {
+        Map<String, String> queryParameters = Map.of();
+        if (httpRequest.containsBody()) {
+            queryParameters = HttpMessageParser.parseParameters(httpRequest.getBody());
+        }
+        return queryParameters;
     }
 
-    private static void verifyParameterExistence(Map<String, String> inputs, List<Parameter> parameters) throws BadRequestException {
-        for (Parameter parameter : parameters) {
-            if (!inputs.containsKey(parameter.getAnnotation(PathParameter.class).key())) {
+    private Object[] extractParameterValues(Method method,
+                                            Map<String, String> pathParameters,
+                                            Map<String, String> queryParameters) throws BadRequestException {
+
+        //어노테이션이 있는 (꼭 입력해야하는) 매개 변수 리스트
+        List<Parameter> arguments = Arrays.stream(method.getParameters())
+                .filter(argument -> argument.isAnnotationPresent(PathParameter.class)
+                        || argument.isAnnotationPresent(QueryParameter.class))
+                .collect(Collectors.toList());
+
+        //필요한 모든 매개 변수를 입력 받았는지 검증
+        verifyParameterExistence(pathParameters, queryParameters, arguments);
+
+        //맵에서 찾아서 순서대로 반환
+        return arguments.stream().map(argument -> {
+            if (argument.isAnnotationPresent(PathParameter.class)) {
+                return pathParameters.get(argument.getAnnotation(PathParameter.class).key());
+            }
+            return queryParameters.get(argument.getAnnotation(QueryParameter.class).key());
+        }).toArray();
+    }
+
+    private static void verifyParameterExistence(Map<String, String> pathParameters,
+                                                 Map<String, String> queryParameters,
+                                                 List<Parameter> arguments) throws BadRequestException {
+        for (Parameter argument : arguments) {
+            if (argument.isAnnotationPresent(PathParameter.class)
+                    && !pathParameters.containsKey(argument.getAnnotation(PathParameter.class).key())) {
+                throw new BadRequestException("유효하지 않은 매개 변수");
+            }
+
+            if (argument.isAnnotationPresent(QueryParameter.class)
+                    && !queryParameters.containsKey(argument.getAnnotation(QueryParameter.class).key())) {
                 throw new BadRequestException("유효하지 않은 매개 변수");
             }
         }
