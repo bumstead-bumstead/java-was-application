@@ -12,10 +12,10 @@ import java.lang.reflect.Method;
 
 public class HttpRequestRouter {
     //set default for test
-    static HttpMethodHandlerMappings requestMappings;
+    static HttpMethodHandlerMapping requestMappings;
 
     static {
-        requestMappings = new HttpMethodHandlerMappings();
+        requestMappings = new HttpMethodHandlerMapping();
         requestMappings.initialize();
 
         Method[] methods = Controller.class.getDeclaredMethods();
