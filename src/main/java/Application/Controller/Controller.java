@@ -1,8 +1,8 @@
-package Controller;
+package Application.Controller;
 
-import db.Database;
-import exceptions.BadRequestException;
-import model.User;
+import Application.db.Database;
+import webserver.exceptions.BadRequestException;
+import Application.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.annotations.HandleRequest;

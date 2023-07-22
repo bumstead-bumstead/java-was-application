@@ -1,8 +1,8 @@
 package webserver.handlers;
 
-import Controller.Controller;
-import exceptions.BadRequestException;
-import exceptions.PathNotFoundException;
+import Application.Controller.Controller;
+import webserver.exceptions.BadRequestException;
+import webserver.exceptions.PathNotFoundException;
 import webserver.annotations.HandleRequest;
 import webserver.annotations.QueryParameter;
 import webserver.http.HttpMethodHandlerMapping;

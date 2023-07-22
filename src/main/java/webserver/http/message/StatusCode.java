@@ -4,7 +4,7 @@ public enum StatusCode {
     OK (200, "Ok"),
     CREATED (201, "Created"),
     ACCEPTED (202, "Accepted"),
-    MULTIPLE_CHOICES (300, "Multiple Choiceㄴ"),
+    MULTIPLE_CHOICES (300, "Multiple Choice"),
     MOVED_PERMANENTLY (301, "Moved_Permanently"),
     FOUND (302, "Found"),
     SEE_OTHER(303, "See Other"),
@@ -17,7 +17,7 @@ public enum StatusCode {
     METHOD_NOT_ALLOWED(405, "Method Not Allowed"),
     INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
     NOT_IMPLEMENTED(501, "Not Implemented"),
-    BAD_GATEWAT(502, "Bad Gateway");
+    BAD_GATEWAY(502, "Bad Gateway");
 
     public int codeNumber;
     public String message;

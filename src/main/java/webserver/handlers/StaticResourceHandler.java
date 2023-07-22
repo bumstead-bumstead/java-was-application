@@ -1,6 +1,6 @@
 package webserver.handlers;
 
-import exceptions.PathNotFoundException;
+import webserver.exceptions.PathNotFoundException;
 import webserver.http.message.*;
 import webserver.utils.HttpHeaderUtils;
 

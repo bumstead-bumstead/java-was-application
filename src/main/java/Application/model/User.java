@@ -1,6 +1,6 @@
-package model;
+package Application.model;
 
-import exceptions.BadRequestException;
+import webserver.exceptions.BadRequestException;
 
 import java.util.Map;
 import java.util.Objects;

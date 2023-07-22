@@ -1,6 +1,6 @@
 package webserver;
 
-import exceptions.PathNotFoundException;
+import webserver.exceptions.PathNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

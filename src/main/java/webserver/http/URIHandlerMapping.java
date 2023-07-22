@@ -1,6 +1,6 @@
 package webserver.http;
 
-import exceptions.PathNotFoundException;
+import webserver.exceptions.PathNotFoundException;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

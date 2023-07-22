@@ -1,7 +1,8 @@
 package Controller;
 
-import db.Database;
-import model.User;
+import Application.Controller.Controller;
+import Application.db.Database;
+import Application.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

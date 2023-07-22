@@ -1,6 +1,7 @@
 package model;
 
-import exceptions.BadRequestException;
+import Application.model.User;
+import webserver.exceptions.BadRequestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

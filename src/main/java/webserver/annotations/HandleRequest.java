@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME) //컴파일 시에만 필요한 것 맞는지?
+@Retention(RetentionPolicy.RUNTIME)
 public @interface HandleRequest {
     String path();
     HttpMethod httpMethod();
