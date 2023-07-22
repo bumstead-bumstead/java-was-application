@@ -1,21 +1,24 @@
 package db;
 
-import com.google.common.collect.Maps;
-
 import exceptions.BadRequestException;
 import model.User;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Database {
-    private static Map<String, User> users = Maps.newHashMap();
+    private static Map<String, User> users = new ConcurrentHashMap<>();
 
     public static void addUser(User user) throws BadRequestException {
-        if (users.containsKey(user.getUserId())) {
+        User existingUser = users.putIfAbsent(user.getUserId(), user);
+        verifyDuplicatedInput(existingUser);
+    }
+
+    private static void verifyDuplicatedInput(User existingUser) throws BadRequestException {
+        if (existingUser != null) {
             throw new BadRequestException("이미 존재하는 유저 정보");
         }
-        users.put(user.getUserId(), user);
     }
 
     public static User findUserById(String userId) {
