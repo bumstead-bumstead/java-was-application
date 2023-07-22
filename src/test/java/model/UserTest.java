@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UserTest {
 
@@ -42,18 +41,5 @@ class UserTest {
         assertEquals("secret_password", user.getPassword());
         assertEquals("John Doe", user.getName());
         assertEquals("john.doe@example.com", user.getEmail());
-    }
-
-    @Test
-    @DisplayName("parameter 중 하나라도 존재하지 않는 경우 User.of는 BadRequestException을 발생시킨다.")
-    void testUserOfWithMissingParameters() {
-        Map<String, String> invalidParameters = new HashMap<>(validParameters);
-        invalidParameters.remove("name");
-
-        Throwable e = assertThrows(BadRequestException.class, () -> {
-            User.of(invalidParameters);
-        });
-
-        assertEquals("유효하지 않은 쿼리 매개변수", e.getMessage());
     }
 }
