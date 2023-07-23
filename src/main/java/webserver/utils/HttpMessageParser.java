@@ -1,9 +1,13 @@
 package webserver.utils;
 
 import webserver.http.message.*;
+import webserver.utils.parser.RequestBodyParserManager;
 
 import java.io.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static webserver.http.message.URI.*;
@@ -56,32 +60,50 @@ public class HttpMessageParser {
         outputStream.write(statusLine.getBytes());
     }
 
-    public static HttpRequest parseHttpRequest(InputStream inputStream) throws IOException {
+    public static HttpRequest parseHttpRequest(InputStream inputStream) throws Exception {
         HttpRequest.Builder httpRequestBuilder = new HttpRequest.Builder();
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
         List<String> requestLine = parseRequestLine(bufferedReader);
         Map<String, String> headers = parseHeaders(bufferedReader);
-
-        if (headers.containsKey(HttpHeaderUtils.CONTENT_LENGTH_HEADER)) {
-            int contentLength = Integer.parseInt(headers.get(HttpHeaderUtils.CONTENT_LENGTH_HEADER));
-            String body = parseBody(bufferedReader, contentLength);
-            httpRequestBuilder.body(body);
-        }
+        Map<String, String> body = readBody(bufferedReader, headers);
+//        //todo : Content-Type에 따라서 파싱하는 로직.. 일반화
+//
+//        if (headers.containsKey(HttpHeaderUtils.CONTENT_LENGTH_HEADER)) {
+//            int contentLength = Integer.parseInt(headers.get(HttpHeaderUtils.CONTENT_LENGTH_HEADER));
+//            String body = readBody(bufferedReader, contentLength);
+//            httpRequestBuilder.body(body);
+//        }
 
         HttpMethod httpMethod = HttpMethod.valueOf(requestLine.get(0));
         URI uri = parseURI(requestLine.get(1));
         String version = requestLine.get(2);
 
         return httpRequestBuilder
+                .body(body)
                 .URI(uri)
                 .version(version)
                 .httpMethod(httpMethod)
                 .build();
     }
 
-    private static String parseBody(BufferedReader bufferedReader, int contentLength) throws IOException {
+    private static Map<String, String> readBody(BufferedReader bufferedReader,
+                                                Map<String, String> headers) throws Exception {
+        if (!headers.containsKey(HttpHeaderUtils.CONTENT_LENGTH_HEADER)
+                || !headers.containsKey(HttpHeaderUtils.CONTENT_TYPE_HEADER)) {
+            return Map.of();
+        }
+
+        int contentLength = Integer.parseInt(headers.get(HttpHeaderUtils.CONTENT_LENGTH_HEADER));
+        String contentType = headers.get(HttpHeaderUtils.CONTENT_TYPE_HEADER);
+
+        String body = readBody(bufferedReader, contentLength);
+
+        return RequestBodyParserManager.parse(body, contentType);
+    }
+
+    private static String readBody(BufferedReader bufferedReader, int contentLength) throws IOException {
         char[] buffer = new char[contentLength];
         bufferedReader.read(buffer, 0, contentLength);
 
@@ -157,7 +179,6 @@ public class HttpMessageParser {
             headers.put(field[0], field[1]);
             line = bufferedReader.readLine();
         }
-
         return headers;
     }
 }

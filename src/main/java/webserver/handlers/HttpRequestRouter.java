@@ -11,7 +11,6 @@ import webserver.http.message.HttpRequest;
 import webserver.http.message.HttpResponse;
 import webserver.http.message.StatusCode;
 import webserver.http.message.URI;
-import webserver.utils.HttpMessageParser;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -49,7 +48,7 @@ public class HttpRequestRouter {
     }
 
     public HttpResponse route(HttpRequest httpRequest) throws InvocationTargetException, IllegalAccessException, IOException {
-        Map<String, String> queryParameters = getQueryParameters(httpRequest);
+        Map<String, String> queryParameters = httpRequest.getBody();
         URI uri = httpRequest.getURI();
 
         try {
@@ -72,14 +71,6 @@ public class HttpRequestRouter {
                     .statusCode(StatusCode.BAD_REQUEST)
                     .build();
         }
-    }
-
-    private static Map<String, String> getQueryParameters(HttpRequest httpRequest) {
-        Map<String, String> queryParameters = Map.of();
-        if (httpRequest.containsBody()) {
-            queryParameters = HttpMessageParser.parseParameters(httpRequest.getBody());
-        }
-        return queryParameters;
     }
 
     private Object[] extractParameterValues(Method method,
