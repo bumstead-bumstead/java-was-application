@@ -1,6 +1,6 @@
 package db;
 
-import Application.db.Database;
+import Application.db.UserDatabase;
 import webserver.exceptions.BadRequestException;
 import Application.model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,8 +30,8 @@ class DatabaseTest {
     @Test
     @DisplayName("이미 존재하는 유저일 경우 BadRequestException을 발생시킨다.")
     void addUser() throws BadRequestException {
-        Database.addUser(user);
-        assertThrows(BadRequestException.class, () -> Database.addUser(user));
+        UserDatabase.addUser(user);
+        assertThrows(BadRequestException.class, () -> UserDatabase.addUser(user));
     }
 
 
