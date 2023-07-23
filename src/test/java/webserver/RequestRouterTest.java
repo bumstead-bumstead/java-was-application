@@ -1,6 +1,6 @@
 package webserver;
 
-import Application.db.Database;
+import Application.db.UserDatabase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,7 +23,7 @@ public class RequestRouterTest {
 
     @BeforeEach
     void setUp() {
-        Database.clear();
+        UserDatabase.clear();
         requestRouter = new HttpRequestRouter();
     }
 

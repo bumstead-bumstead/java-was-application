@@ -2,7 +2,7 @@ package webserver.handlers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.utils.HttpMessageParser;
+import webserver.utils.parser.HttpMessageParser;
 import webserver.http.message.HttpRequest;
 import webserver.http.message.HttpResponse;
 
@@ -29,7 +29,8 @@ public class RequestHandler implements Runnable {
             HttpResponse httpResponse = HttpRequestRouter.getInstance().route(httpRequest);
             response(out, httpResponse);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage() + " : " + e.getClass().getName());
+            e.printStackTrace();
         }
     }
 

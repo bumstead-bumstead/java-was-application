@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Database {
+public class UserDatabase {
     private static Map<String, User> users = new ConcurrentHashMap<>();
 
     public static void addUser(User user) throws BadRequestException {
@@ -22,6 +22,16 @@ public class Database {
     private static void verifyDuplicatedInput(User existingUser) throws BadRequestException {
         if (existingUser != null) {
             throw new BadRequestException("이미 존재하는 유저 정보");
+        }
+    }
+
+    public static void verifyLoginForm(String userId, String password) throws BadRequestException {
+        User targetUser = UserDatabase.findUserById(userId);
+        if (targetUser == null) {
+            throw new BadRequestException("존재하지 않는 ID입니다.");
+        }
+        if (!password.equals(targetUser.getPassword())) {
+            throw new BadRequestException("비밀번호가 틀렸습니다.");
         }
     }
 
