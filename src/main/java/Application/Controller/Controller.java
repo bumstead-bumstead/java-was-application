@@ -1,6 +1,8 @@
 package Application.Controller;
 
-import Application.db.Database;
+import Application.db.CookieDatabase;
+import Application.db.UserDatabase;
+import Application.model.Cookie;
 import Application.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +34,7 @@ public class Controller {
                                    @QueryParameter(key = "email") String email) {
         try {
             User user = new User(userId, password, name, email);
-            Database.addUser(user);
+            UserDatabase.addUser(user);
         } catch (BadRequestException e) {
             logger.error(e.getMessage());
             return new HttpResponse.Builder()
@@ -45,5 +47,34 @@ public class Controller {
                 .headers(Map.of(HttpHeaderUtils.LOCATION_HEADER, "http://localhost:8080/index.html"))
                 .build();
     }
+
+    @HandleRequest(path = "/user/login", httpMethod = HttpMethod.POST)
+    public HttpResponse login(@QueryParameter(key = "userId") String userId,
+                                   @QueryParameter(key = "password") String password) throws BadRequestException {
+        try {
+            UserDatabase.verifyLoginForm(userId, password);
+        } catch (BadRequestException e) {
+            logger.error(e.getMessage());
+            return new HttpResponse.Builder()
+                    .statusCode(StatusCode.FOUND)
+                    .headers(Map.of(HttpHeaderUtils.LOCATION_HEADER, "http://localhost:8080/user/login_failed.html"))
+                    .build();
+        }
+
+        String cookieValue = HttpHeaderUtils.generateCookieHeader();
+        Map<String, String> headers = Map.of(HttpHeaderUtils.LOCATION_HEADER,
+                "http://localhost:8080/index.html",
+                HttpHeaderUtils.SET_COOKIE_HEADER,
+                cookieValue);
+
+        Cookie cookie = new Cookie(cookieValue, userId);
+        CookieDatabase.addCookie(cookie);
+
+        return new HttpResponse.Builder()
+                .statusCode(StatusCode.FOUND)
+                .headers(headers)
+                .build();
+    }
+
 }
 
