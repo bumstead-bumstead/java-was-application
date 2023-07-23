@@ -55,8 +55,9 @@ public class RequestRouterTest {
     @DisplayName("URI, parameter에 대한 요청 처리 테스트")
     void routeURIAndParameter(String path, Map<String, String> parameters, StatusCode expectedStatusCode) throws Exception {
         HttpRequest httpRequest = new HttpRequest.Builder()
-                .httpMethod(HttpMethod.GET)
-                .URI(new URI(path, parameters))
+                .httpMethod(HttpMethod.POST)
+                .URI(new URI(path, Map.of()))
+                .body(parameters)
                 .version("HTTP/1.1")
                 .build();
 

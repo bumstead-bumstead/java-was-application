@@ -35,7 +35,7 @@ class HttpMessageParserTest {
 
     @Test
     @DisplayName("InputStream to HttpRequest 파싱 로직 테스트")
-    void parseHttpRequest() throws IOException {
+    void parseHttpRequest() throws Exception {
         //given
         String input = "GET /index.html HTTP/1.1\n" +
                 "Host: localhost:8080\n" +
@@ -63,7 +63,7 @@ class HttpMessageParserTest {
 
     @Test
     @DisplayName("쿼리가 있는 경우 InputStream to HttpRequest 파싱 로직 테스트")
-    void parseHttpRequestWithQuery() throws IOException {
+    void parseHttpRequestWithQuery() throws Exception {
         //given
         String input = "GET /user/create?key1=value1&key2=value2 HTTP/1.1\n" +
                 "Host: localhost:8080\n" +
@@ -91,7 +91,7 @@ class HttpMessageParserTest {
 
     @Test
     @DisplayName("바디가 있는 경우 InputStream to HttpRequest 파싱 로직 테스트")
-    void parseHttpRequestWithBody() throws IOException {
+    void parseHttpRequestWithBody() throws Exception {
         //given
         String input = "GET /user/create?key1=value1&key2=value2 HTTP/1.1\n" +
                 "Host: localhost:8080\n" +
@@ -99,20 +99,21 @@ class HttpMessageParserTest {
                 "Cache-Control: max-age=0\n" +
                 "Content-Type: 4\n" +
                 "\n" +
-                "test";
+                "test=test";
 
         Map<String, String> expectedHeader = new HashMap<>();
         expectedHeader.put("Host", "localhost:8080");
         expectedHeader.put("Connection", "keep-alive");
         expectedHeader.put("Cache-Control", "max-age=0");
-        expectedHeader.put("Content-Type", "4");
+        expectedHeader.put("Content-Length", "9");
+        expectedHeader.put("Content-Type", "application/x-www-form-urlencoded");
 
         InputStream inputStream = new ByteArrayInputStream(input.getBytes());
         HttpRequest expected = new HttpRequest.Builder()
                 .httpMethod(HttpMethod.GET)
                 .URI(new URI("/user/create", Map.of("key1", "value1", "key2", "value2")))
                 .version("HTTP/1.1")
-                .body("test")
+                .body(Map.of("test", "test"))
                 .build();
 
         //when
