@@ -3,7 +3,7 @@ package utils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import webserver.http.message.*;
-import webserver.utils.HttpMessageParser;
+import webserver.utils.parser.HttpMessageParser;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

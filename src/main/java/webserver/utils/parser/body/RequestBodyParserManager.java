@@ -1,4 +1,4 @@
-package webserver.utils.parser;
+package webserver.utils.parser.body;
 
 import webserver.exceptions.BadRequestException;
 

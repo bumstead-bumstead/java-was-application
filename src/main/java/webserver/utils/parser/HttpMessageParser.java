@@ -1,7 +1,9 @@
-package webserver.utils;
+package webserver.utils.parser;
 
 import webserver.http.message.*;
-import webserver.utils.parser.RequestBodyParserManager;
+import webserver.utils.HttpHeaderUtils;
+import webserver.utils.StringUtils;
+import webserver.utils.parser.body.RequestBodyParserManager;
 
 import java.io.*;
 import java.util.Arrays;
@@ -68,13 +70,6 @@ public class HttpMessageParser {
         List<String> requestLine = parseRequestLine(bufferedReader);
         Map<String, String> headers = parseHeaders(bufferedReader);
         Map<String, String> body = readBody(bufferedReader, headers);
-//        //todo : Content-Type에 따라서 파싱하는 로직.. 일반화
-//
-//        if (headers.containsKey(HttpHeaderUtils.CONTENT_LENGTH_HEADER)) {
-//            int contentLength = Integer.parseInt(headers.get(HttpHeaderUtils.CONTENT_LENGTH_HEADER));
-//            String body = readBody(bufferedReader, contentLength);
-//            httpRequestBuilder.body(body);
-//        }
 
         HttpMethod httpMethod = HttpMethod.valueOf(requestLine.get(0));
         URI uri = parseURI(requestLine.get(1));
