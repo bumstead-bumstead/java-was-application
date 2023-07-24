@@ -18,9 +18,10 @@ public class StaticResourceHandler {
         byte[] body = getResource(uri);
         MIME mime = uri.getExtension().get();
 
-        HttpResponseHeader headers = new HttpResponseHeader();
-        headers.addContentType(mime.contentType);
-        headers.addContentLength(body.length);
+        HttpMessageHeader headers = new HttpMessageHeader.Builder()
+                .addContentLength(body.length)
+                .addContentType(mime.contentType)
+                .build();
 
         return new HttpResponse.Builder()
                 .headers(headers)
