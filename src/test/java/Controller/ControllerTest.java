@@ -1,13 +1,16 @@
 package Controller;
 
 import Application.Controller.Controller;
+import Application.db.SessionDatabase;
 import Application.db.UserDatabase;
+import Application.model.Cookie;
 import Application.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import webserver.exceptions.BadRequestException;
+import webserver.http.message.HttpMessageHeader;
 import webserver.http.message.HttpResponse;
 import webserver.http.message.StatusCode;
 import webserver.utils.HttpHeaderUtils;
@@ -83,13 +86,23 @@ class ControllerTest {
         }
 
         @Test
+        @DisplayName("올바른 로그인 후에는 세션을 저장한다.")
+        void loginSessionTest() throws BadRequestException {
+            SessionDatabase.clear();
+            HttpResponse httpResponse = controller.login(userId, password);
+
+            assertEquals(1, SessionDatabase.size());
+        }
+
+        @Test
         @DisplayName("올바른 로그인일 경우 응답 헤더에 cookie를 포함시킨다.")
         void loginCookieTest() throws BadRequestException {
             HttpResponse httpResponse = controller.login(userId, password);
+            HttpMessageHeader headers = httpResponse.getHeaders();
 
-            assertThat(httpResponse.getHeaders().containsKey("Set-Cookie"));
-            String cookieValue = httpResponse.getHeaders().getValue("Set-Cookie");
-            assertThat(cookieValue.contains("path=/"));
+            assertThat(headers.getCookies().size() > 0);
+            Cookie cookie = headers.getCookies().get(0);
+            assertEquals("sid", cookie.getName());
         }
         @Test
         @DisplayName("존재하지 않는 id인 경우, /user/login_failed.html로 redirection")
