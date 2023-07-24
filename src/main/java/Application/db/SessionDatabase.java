@@ -21,6 +21,10 @@ public class SessionDatabase {
         return sessionMap.get(sessionId);
     }
 
+    public static int size() {
+        return sessionMap.size();
+    }
+
     public static void clear() {
         sessionMap.clear();
     }
