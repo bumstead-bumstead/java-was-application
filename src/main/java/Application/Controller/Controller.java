@@ -11,10 +11,9 @@ import webserver.annotations.QueryParameter;
 import webserver.exceptions.BadRequestException;
 import webserver.http.message.HttpMethod;
 import webserver.http.message.HttpResponse;
+import webserver.http.message.HttpResponseHeader;
 import webserver.http.message.StatusCode;
 import webserver.utils.HttpHeaderUtils;
-
-import java.util.Map;
 
 public class Controller {
     private static final Logger logger = LoggerFactory.getLogger(Controller.class);
@@ -37,44 +36,35 @@ public class Controller {
             UserDatabase.addUser(user);
         } catch (BadRequestException e) {
             logger.error(e.getMessage());
-            return new HttpResponse.Builder()
-                    .statusCode(StatusCode.BAD_REQUEST)
-                    .build();
+            return HttpResponse.generateError(StatusCode.BAD_REQUEST);
         }
 
-        return new HttpResponse.Builder()
-                .statusCode(StatusCode.FOUND)
-                .headers(Map.of(HttpHeaderUtils.LOCATION_HEADER, "http://localhost:8080/index.html"))
-                .build();
+        return HttpResponse.generateRedirect("http://localhost:8080/index.html");
     }
 
     @HandleRequest(path = "/user/login", httpMethod = HttpMethod.POST)
     public HttpResponse login(@QueryParameter(key = "userId") String userId,
-                                   @QueryParameter(key = "password") String password) throws BadRequestException {
+                              @QueryParameter(key = "password") String password) throws BadRequestException {
         try {
             UserDatabase.verifyLoginForm(userId, password);
         } catch (BadRequestException e) {
             logger.error(e.getMessage());
-            return new HttpResponse.Builder()
-                    .statusCode(StatusCode.FOUND)
-                    .headers(Map.of(HttpHeaderUtils.LOCATION_HEADER, "http://localhost:8080/user/login_failed.html"))
-                    .build();
+            return HttpResponse.generateRedirect("http://localhost:8080/user/login_failed.html");
         }
 
         String cookieValue = HttpHeaderUtils.generateCookieHeader();
-        Map<String, String> headers = Map.of(HttpHeaderUtils.LOCATION_HEADER,
-                "http://localhost:8080/index.html",
-                HttpHeaderUtils.SET_COOKIE_HEADER,
-                cookieValue);
+
+        HttpResponseHeader httpResponseHeader = new HttpResponseHeader();
+        httpResponseHeader.addLocation("http://localhost:8080/index.html");
+        httpResponseHeader.addCookie(cookieValue);
 
         Cookie cookie = new Cookie(cookieValue, userId);
         CookieDatabase.addCookie(cookie);
 
         return new HttpResponse.Builder()
                 .statusCode(StatusCode.FOUND)
-                .headers(headers)
+                .headers(httpResponseHeader)
                 .build();
     }
-
 }
 

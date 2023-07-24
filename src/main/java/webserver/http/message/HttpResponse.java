@@ -3,21 +3,20 @@ package webserver.http.message;
 import webserver.utils.HttpHeaderUtils;
 
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Objects;
 
 public class HttpResponse {
     private final String version;
     private final StatusCode statusCode;
 
-    private final Map<String, String> headers;
+    private final HttpResponseHeader headers;
 
     private final byte[] body;
 
     public static class Builder {
         private String version;
         private StatusCode statusCode;
-        private Map<String, String> headers;
+        private HttpResponseHeader headers;
         private byte[] body;
 
         public Builder version(String version) {
@@ -30,7 +29,7 @@ public class HttpResponse {
             return this;
         }
 
-        public Builder headers(Map<String, String> headers) {
+        public Builder headers(HttpResponseHeader headers) {
             this.headers = headers;
             return this;
         }
@@ -45,7 +44,7 @@ public class HttpResponse {
                 version = HttpHeaderUtils.DEFAULT_HTTP_VERSION;
             }
             if (headers == null) {
-                headers = Map.of();
+                headers = new HttpResponseHeader();
             }
             if (body == null) {
                 body = new byte[]{};
@@ -58,7 +57,7 @@ public class HttpResponse {
         }
     }
 
-    private HttpResponse(String version, StatusCode statusCode, Map<String, String> headers, byte[] body) {
+    private HttpResponse(String version, StatusCode statusCode, HttpResponseHeader headers, byte[] body) {
         this.version = version;
         this.statusCode = statusCode;
         this.headers = headers;
@@ -77,8 +76,24 @@ public class HttpResponse {
         return statusCode;
     }
 
-    public Map<String, String> getHeaders() {
+    public HttpResponseHeader getHeaders() {
         return headers;
+    }
+
+    public static HttpResponse generateRedirect(String path) {
+        HttpResponseHeader httpResponseHeader = new HttpResponseHeader();
+        httpResponseHeader.addLocation("http://localhost:8080/index.html");
+
+        return new HttpResponse.Builder()
+                .statusCode(StatusCode.FOUND)
+                .headers(httpResponseHeader)
+                .build();
+    }
+
+    public static HttpResponse generateError(StatusCode statusCode) {
+        return new HttpResponse.Builder()
+                .statusCode(statusCode)
+                .build();
     }
 
     @Override

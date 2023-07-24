@@ -63,13 +63,9 @@ public class HttpRequestRouter {
 
             return httpResponse;
         } catch (PathNotFoundException e) {
-            return new HttpResponse.Builder()
-                    .statusCode(StatusCode.NOT_FOUND)
-                    .build();
+            return HttpResponse.generateError(StatusCode.NOT_FOUND);
         } catch (BadRequestException e) {
-            return new HttpResponse.Builder()
-                    .statusCode(StatusCode.BAD_REQUEST)
-                    .build();
+            return HttpResponse.generateError(StatusCode.BAD_REQUEST);
         }
     }
 
