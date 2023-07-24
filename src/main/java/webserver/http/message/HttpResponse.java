@@ -9,14 +9,14 @@ public class HttpResponse {
     private final String version;
     private final StatusCode statusCode;
 
-    private final HttpResponseHeader headers;
+    private final HttpMessageHeader headers;
 
     private final byte[] body;
 
     public static class Builder {
         private String version;
         private StatusCode statusCode;
-        private HttpResponseHeader headers;
+        private HttpMessageHeader headers;
         private byte[] body;
 
         public Builder version(String version) {
@@ -29,7 +29,7 @@ public class HttpResponse {
             return this;
         }
 
-        public Builder headers(HttpResponseHeader headers) {
+        public Builder headers(HttpMessageHeader headers) {
             this.headers = headers;
             return this;
         }
@@ -44,7 +44,7 @@ public class HttpResponse {
                 version = HttpHeaderUtils.DEFAULT_HTTP_VERSION;
             }
             if (headers == null) {
-                headers = new HttpResponseHeader();
+                headers = new HttpMessageHeader();
             }
             if (body == null) {
                 body = new byte[]{};
@@ -57,7 +57,7 @@ public class HttpResponse {
         }
     }
 
-    private HttpResponse(String version, StatusCode statusCode, HttpResponseHeader headers, byte[] body) {
+    private HttpResponse(String version, StatusCode statusCode, HttpMessageHeader headers, byte[] body) {
         this.version = version;
         this.statusCode = statusCode;
         this.headers = headers;
@@ -76,17 +76,18 @@ public class HttpResponse {
         return statusCode;
     }
 
-    public HttpResponseHeader getHeaders() {
+    public HttpMessageHeader getHeaders() {
         return headers;
     }
 
     public static HttpResponse generateRedirect(String path) {
-        HttpResponseHeader httpResponseHeader = new HttpResponseHeader();
-        httpResponseHeader.addLocation(path);
+        HttpMessageHeader httpMessageHeader = new HttpMessageHeader.Builder()
+                .addLocation(path)
+                .build();
 
         return new HttpResponse.Builder()
                 .statusCode(StatusCode.FOUND)
-                .headers(httpResponseHeader)
+                .headers(httpMessageHeader)
                 .build();
     }
 
