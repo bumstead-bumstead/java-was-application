@@ -50,8 +50,8 @@ public class StaticResourceHandlerTest {
                 .build();
 
         HttpResponse httpResponse = handle(httpRequest);
-        Map<String, String> headers = httpResponse.getHeaders();
-        assertEquals(headers.get(CONTENT_TYPE_HEADER), mime.contentType);
+        HttpResponseHeader headers = httpResponse.getHeaders();
+        assertEquals(headers.getValue(CONTENT_TYPE_HEADER), mime.contentType);
     }
 
     public static Stream<Arguments> provideContentTypeForTestingHandle() {

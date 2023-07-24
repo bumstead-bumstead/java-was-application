@@ -40,9 +40,6 @@ public class URI {
         return extension.isPresent();
     }
 
-    ;
-
-
     public String getPath() {
         return path;
     }

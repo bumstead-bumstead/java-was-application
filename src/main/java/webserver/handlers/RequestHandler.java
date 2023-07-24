@@ -13,9 +13,10 @@ public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
-
+    private HttpRequestRouter httpRequestRouter;
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
+        this.httpRequestRouter = HttpRequestRouter.getInstance();
     }
 
     public void run() {
@@ -24,9 +25,8 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpRequest httpRequest = HttpMessageParser.parseHttpRequest(in);
-
             printHttpRequestHeader(httpRequest);
-            HttpResponse httpResponse = HttpRequestRouter.getInstance().route(httpRequest);
+            HttpResponse httpResponse = httpRequestRouter.route(httpRequest);
             response(out, httpResponse);
         } catch (Exception e) {
             logger.error(e.getMessage() + " : " + e.getClass().getName());
@@ -38,12 +38,8 @@ public class RequestHandler implements Runnable {
         DataOutputStream dos = new DataOutputStream(out);
         ByteArrayOutputStream outputStream = HttpMessageParser.parseHttpResponse(httpResponse);
 
-        try {
-            dos.write(outputStream.toByteArray());
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage() + " : " + e.getClass().getName());
-        }
+         dos.write(outputStream.toByteArray());
+         dos.flush();
     }
 
     private synchronized static void printHttpRequestHeader(HttpRequest httpRequest) {

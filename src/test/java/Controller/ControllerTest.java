@@ -88,7 +88,7 @@ class ControllerTest {
             HttpResponse httpResponse = controller.login(userId, password);
 
             assertThat(httpResponse.getHeaders().containsKey("Set-Cookie"));
-            String cookieValue = httpResponse.getHeaders().get("Set-Cookie");
+            String cookieValue = httpResponse.getHeaders().getValue("Set-Cookie");
             assertThat(cookieValue.contains("path=/"));
         }
         @Test
@@ -98,7 +98,7 @@ class ControllerTest {
             HttpResponse httpResponse = controller.login(userId, password);
 
             String expectedRedirectionURI = "http://localhost:8080/user/login_failed.html";
-            String actualRedirectionURI = httpResponse.getHeaders().get(HttpHeaderUtils.LOCATION_HEADER);
+            String actualRedirectionURI = httpResponse.getHeaders().getValue(HttpHeaderUtils.LOCATION_HEADER);
 
             assertEquals(expectedRedirectionURI, actualRedirectionURI);
         }
@@ -110,7 +110,7 @@ class ControllerTest {
             HttpResponse httpResponse = controller.login(userId, password);
 
             String expectedRedirectionURI = "http://localhost:8080/user/login_failed.html";
-            String actualRedirectionURI = httpResponse.getHeaders().get(HttpHeaderUtils.LOCATION_HEADER);
+            String actualRedirectionURI = httpResponse.getHeaders().getValue(HttpHeaderUtils.LOCATION_HEADER);
 
             assertEquals(expectedRedirectionURI, actualRedirectionURI);
         }

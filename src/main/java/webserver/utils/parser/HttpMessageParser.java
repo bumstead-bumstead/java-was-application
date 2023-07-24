@@ -34,10 +34,10 @@ public class HttpMessageParser {
     }
 
     private static void fillHeaders(HttpResponse httpResponse, OutputStream outputStream) throws IOException {
-        Map<String, String> headers = httpResponse.getHeaders();
+        HttpResponseHeader headers = httpResponse.getHeaders();
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (Map.Entry<String, String> line : headers.entrySet()) {
+        for (Map.Entry<String, String> line : headers.getHeaderMap().entrySet()) {
             stringBuilder.append(line.getKey())
                     .append(HEADER_SEPARATOR)
                     .append(StringUtils.appendNewLine(line.getValue()));
@@ -92,7 +92,6 @@ public class HttpMessageParser {
 
         int contentLength = Integer.parseInt(headers.get(HttpHeaderUtils.CONTENT_LENGTH_HEADER));
         String contentType = headers.get(HttpHeaderUtils.CONTENT_TYPE_HEADER);
-
         String body = readBody(bufferedReader, contentLength);
 
         return RequestBodyParserManager.parse(body, contentType);
