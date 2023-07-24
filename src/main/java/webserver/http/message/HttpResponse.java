@@ -82,7 +82,7 @@ public class HttpResponse {
 
     public static HttpResponse generateRedirect(String path) {
         HttpResponseHeader httpResponseHeader = new HttpResponseHeader();
-        httpResponseHeader.addLocation("http://localhost:8080/index.html");
+        httpResponseHeader.addLocation(path);
 
         return new HttpResponse.Builder()
                 .statusCode(StatusCode.FOUND)
