@@ -1,12 +1,12 @@
 package Application.model;
 
 public class Cookie {
+    private String name;
     private String value;
-    private String userId;
 
-    public Cookie(String value, String userId) {
+    public Cookie(String name, String value) {
+        this.name = name;
         this.value = value;
-        this.userId = userId;
     }
 
     public String getValue() {
@@ -17,11 +17,11 @@ public class Cookie {
         this.value = value;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getName() {
+        return name;
     }
 
     public void setUserId(String userId) {
-        this.userId = userId;
+        this.name = name;
     }
 }
