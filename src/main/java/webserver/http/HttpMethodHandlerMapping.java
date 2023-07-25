@@ -30,4 +30,11 @@ public class HttpMethodHandlerMapping {
 
         return uriHandlers.getMappedMethod(path);
     }
+
+    public boolean containsCapableMethod(String path, HttpMethod httpMethod) {
+        if (!requestMappings.containsKey(httpMethod)) {
+            return false;
+        }
+        return requestMappings.get(httpMethod).contains(path);
+    }
 }

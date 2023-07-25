@@ -22,6 +22,10 @@ public class URIHandlerMapping {
         return map.get(path);
     }
 
+    public boolean contains(String path) {
+        return map.containsKey(path);
+    }
+
     private void verifyMappedMethodExistence(String path) throws PathNotFoundException {
         if (!map.containsKey(path)) {
             throw new PathNotFoundException();

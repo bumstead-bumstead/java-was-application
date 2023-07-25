@@ -72,6 +72,15 @@ public class HttpMessageHeader {
         return headerMap;
     }
 
+    public Cookie getCookie(String name) {
+        for (Cookie cookie : cookies) {
+            if (name.equals(cookie.getName())) {
+                return cookie;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return "HttpMessageHeader{" +
