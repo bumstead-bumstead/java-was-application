@@ -1,4 +1,4 @@
-package Application.model;
+package application.model;
 
 import webserver.exceptions.BadRequestException;
 

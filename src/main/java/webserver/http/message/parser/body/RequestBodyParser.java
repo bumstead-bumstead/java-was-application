@@ -1,4 +1,4 @@
-package webserver.utils.parser.body;
+package webserver.http.message.parser.body;
 
 import java.util.Map;
 

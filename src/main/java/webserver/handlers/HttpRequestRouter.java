@@ -1,6 +1,6 @@
 package webserver.handlers;
 
-import Application.Controller.Controller;
+import application.Controller.Controller;
 import webserver.annotations.HandleRequest;
 import webserver.annotations.PathParameter;
 import webserver.annotations.QueryParameter;

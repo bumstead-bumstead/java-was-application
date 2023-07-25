@@ -1,9 +1,9 @@
-package webserver.utils.parser;
+package webserver.http.message.parser;
 
-import Application.model.Cookie;
+import application.model.Cookie;
 import webserver.http.message.*;
 import webserver.utils.StringUtils;
-import webserver.utils.parser.body.RequestBodyParserManager;
+import webserver.http.message.parser.body.RequestBodyParserManager;
 
 import java.io.*;
 import java.util.Arrays;
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static webserver.http.message.URI.*;
-import static webserver.utils.HttpHeaderUtils.*;
+import static webserver.http.message.HttpHeaderUtils.*;
 
 public class HttpMessageParser {
 

@@ -1,7 +1,7 @@
-package Application.db;
+package application.db;
 
 import webserver.exceptions.BadRequestException;
-import Application.model.User;
+import application.model.User;
 
 import java.util.Collection;
 import java.util.Map;

@@ -2,7 +2,7 @@ package webserver.handlers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.utils.parser.HttpMessageParser;
+import webserver.http.message.parser.HttpMessageParser;
 import webserver.http.message.HttpRequest;
 import webserver.http.message.HttpResponse;
 

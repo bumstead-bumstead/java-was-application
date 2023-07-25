@@ -1,6 +1,6 @@
-package Application.db;
+package application.db;
 
-import Application.model.Session;
+import application.model.Session;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

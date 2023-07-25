@@ -1,10 +1,10 @@
-package Application.Controller;
+package application.Controller;
 
-import Application.db.SessionDatabase;
-import Application.db.UserDatabase;
-import Application.model.Cookie;
-import Application.model.Session;
-import Application.model.User;
+import application.db.SessionDatabase;
+import application.db.UserDatabase;
+import application.model.Cookie;
+import application.model.Session;
+import application.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.annotations.HandleRequest;

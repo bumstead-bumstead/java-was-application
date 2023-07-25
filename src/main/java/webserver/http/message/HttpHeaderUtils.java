@@ -1,4 +1,4 @@
-package webserver.utils;
+package webserver.http.message;
 
 public class HttpHeaderUtils {
     public static final String CONTENT_TYPE_HEADER = "Content-Type";

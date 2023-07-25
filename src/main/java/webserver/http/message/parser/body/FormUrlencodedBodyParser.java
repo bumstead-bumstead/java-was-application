@@ -1,6 +1,6 @@
-package webserver.utils.parser.body;
+package webserver.http.message.parser.body;
 
-import webserver.utils.parser.HttpMessageParser;
+import webserver.http.message.parser.HttpMessageParser;
 
 import java.util.Map;
 

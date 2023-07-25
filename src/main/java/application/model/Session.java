@@ -1,4 +1,4 @@
-package Application.model;
+package application.model;
 
 import java.util.Map;
 import java.util.UUID;

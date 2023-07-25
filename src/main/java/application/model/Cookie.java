@@ -1,8 +1,8 @@
-package Application.model;
+package application.model;
 
 import java.util.Objects;
 
-import static webserver.utils.HttpHeaderUtils.PATH_HEADER;
+import static webserver.http.message.HttpHeaderUtils.PATH_HEADER;
 
 public class Cookie {
     private String name;

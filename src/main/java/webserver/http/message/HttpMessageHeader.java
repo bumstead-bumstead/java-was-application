@@ -1,7 +1,6 @@
 package webserver.http.message;
 
-import Application.model.Cookie;
-import webserver.utils.HttpHeaderUtils;
+import application.model.Cookie;
 
 import java.util.*;
 
