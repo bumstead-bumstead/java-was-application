@@ -1,10 +1,10 @@
 package utils;
 
-import Application.model.Cookie;
+import application.model.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import webserver.http.message.*;
-import webserver.utils.parser.HttpMessageParser;
+import webserver.http.message.parser.HttpMessageParser;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -13,8 +13,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class HttpMessageParserTest {
 
@@ -29,9 +28,7 @@ class HttpMessageParserTest {
         String output = outputStream.toString();
 
         //then
-        assertThat(output.contains("Content-Length: 0"));
-        assertThat(output.contains("Content-Type: text/html;charset=utf-8"));
-        assertThat(output.startsWith("HTTP/1.1 200 OK"));
+        assertThat(output).startsWith("HTTP/1.1 200 OK");
     }
 
     @Test
@@ -52,9 +49,9 @@ class HttpMessageParserTest {
         String output = outputStream.toString();
 
         //then
-        assertThat(output.contains("Content-Length: 0"));
-        assertThat(output.contains("Set-Cookie: sid=test"));
-        assertThat(output.startsWith("HTTP/1.1 200 OK"));
+        assertThat(output).contains("Content-Length: 0");
+        assertThat(output).contains("Set-Cookie: sid=test");
+        assertThat(output).startsWith("HTTP/1.1 200 OK");
     }
 
     @Test
@@ -88,7 +85,7 @@ class HttpMessageParserTest {
         HttpRequest actual = HttpMessageParser.parseHttpRequest(inputStream);
 
         //then
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -128,7 +125,7 @@ class HttpMessageParserTest {
         System.out.println("expected = " + expected);
 
         //then
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -162,7 +159,7 @@ class HttpMessageParserTest {
         HttpRequest actual = HttpMessageParser.parseHttpRequest(inputStream);
 
         //then
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -205,6 +202,6 @@ class HttpMessageParserTest {
         HttpRequest actual = HttpMessageParser.parseHttpRequest(inputStream);
 
         //then
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 }

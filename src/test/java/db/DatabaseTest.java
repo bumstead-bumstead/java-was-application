@@ -1,16 +1,16 @@
 package db;
 
-import Application.db.UserDatabase;
-import webserver.exceptions.BadRequestException;
-import Application.model.User;
+import application.db.UserDatabase;
+import application.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import webserver.exceptions.BadRequestException;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.*;
 
 class DatabaseTest {
 
@@ -31,9 +31,8 @@ class DatabaseTest {
     @DisplayName("이미 존재하는 유저일 경우 BadRequestException을 발생시킨다.")
     void addUser() throws BadRequestException {
         UserDatabase.addUser(user);
-        assertThrows(BadRequestException.class, () -> UserDatabase.addUser(user));
+
+        assertThatThrownBy(()-> UserDatabase.addUser(user))
+                .isInstanceOf(BadRequestException.class);
     }
-
-
-
 }

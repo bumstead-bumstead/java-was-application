@@ -1,6 +1,6 @@
 package webserver;
 
-import Application.db.UserDatabase;
+import application.db.UserDatabase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,8 +14,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class RequestRouterTest {
 
@@ -39,8 +39,8 @@ public class RequestRouterTest {
 
         HttpResponse httpResponse = requestRouter.route(httpRequest);
 
-        assertEquals(expectedStatusCode, httpResponse.getStatusCode());
-        assertArrayEquals(expectedBody, httpResponse.getBody());
+        assertThat(httpResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        assertThat(expectedBody).isEqualTo(httpResponse.getBody());
     }
 
     public static Stream<Arguments> providePathAndStatusCodeAndBodyForTestingStaticResource() {
@@ -63,7 +63,7 @@ public class RequestRouterTest {
 
         HttpResponse httpResponse = requestRouter.route(httpRequest);
 
-        assertEquals(expectedStatusCode, httpResponse.getStatusCode());
+        assertThat(httpResponse.getStatusCode()).isEqualTo(expectedStatusCode);
     }
 
     public static Stream<Arguments> providePathAndParametersAndStatusCodeForTestingURIAndParameters() {

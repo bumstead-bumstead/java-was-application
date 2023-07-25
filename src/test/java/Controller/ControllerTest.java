@@ -1,22 +1,21 @@
 package Controller;
 
-import Application.Controller.Controller;
-import Application.db.SessionDatabase;
-import Application.db.UserDatabase;
-import Application.model.Cookie;
-import Application.model.User;
+import application.Controller.Controller;
+import application.db.SessionDatabase;
+import application.db.UserDatabase;
+import application.model.Cookie;
+import application.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import webserver.exceptions.BadRequestException;
+import webserver.http.message.HttpHeaderUtils;
 import webserver.http.message.HttpMessageHeader;
 import webserver.http.message.HttpResponse;
 import webserver.http.message.StatusCode;
-import webserver.utils.HttpHeaderUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ControllerTest {
     @Nested
@@ -42,8 +41,8 @@ class ControllerTest {
         void createUserTest() {
             HttpResponse httpResponse = controller.createUser(userId, password, name, email);
 
-            assertEquals(StatusCode.FOUND, httpResponse.getStatusCode());
-            assertThat(httpResponse.getHeaders().containsKey("Location"));
+            assertThat(httpResponse.getStatusCode()).isEqualTo(StatusCode.FOUND);
+            assertThat(httpResponse.getHeaders().containsKey("Location")).isTrue();
         }
 
         @Test
@@ -54,7 +53,7 @@ class ControllerTest {
             User actualUser = UserDatabase.findUserById("userId");
             User expectedUser = new User(userId, password, name, email);
 
-            assertEquals(expectedUser, actualUser);
+            assertThat(actualUser).isEqualTo(expectedUser);
         }
     }
 
@@ -82,7 +81,8 @@ class ControllerTest {
         @DisplayName("올바른 로그인에 대해서 302를 응답으로 보낸다.")
         void login() throws BadRequestException {
             HttpResponse httpResponse = controller.login(userId, password);
-            assertEquals(StatusCode.FOUND, httpResponse.getStatusCode());
+
+            assertThat(httpResponse.getStatusCode()).isEqualTo(StatusCode.FOUND);
         }
 
         @Test
@@ -91,7 +91,7 @@ class ControllerTest {
             SessionDatabase.clear();
             HttpResponse httpResponse = controller.login(userId, password);
 
-            assertEquals(1, SessionDatabase.size());
+            assertThat(SessionDatabase.size()).isEqualTo(1);
         }
 
         @Test
@@ -100,9 +100,10 @@ class ControllerTest {
             HttpResponse httpResponse = controller.login(userId, password);
             HttpMessageHeader headers = httpResponse.getHeaders();
 
-            assertThat(headers.getCookies().size() > 0);
+            assertThat(headers.getCookies().size()).isGreaterThan(0);
+
             Cookie cookie = headers.getCookies().get(0);
-            assertEquals("sid", cookie.getName());
+            assertThat(cookie.getName()).isEqualTo("sid");
         }
         @Test
         @DisplayName("존재하지 않는 id인 경우, /user/login_failed.html로 redirection")
@@ -113,7 +114,8 @@ class ControllerTest {
             String expectedRedirectionURI = "http://localhost:8080/user/login_failed.html";
             String actualRedirectionURI = httpResponse.getHeaders().getValue(HttpHeaderUtils.LOCATION_HEADER);
 
-            assertEquals(expectedRedirectionURI, actualRedirectionURI);
+
+            assertThat(actualRedirectionURI).isEqualTo(expectedRedirectionURI);
         }
 
         @Test
@@ -125,7 +127,7 @@ class ControllerTest {
             String expectedRedirectionURI = "http://localhost:8080/user/login_failed.html";
             String actualRedirectionURI = httpResponse.getHeaders().getValue(HttpHeaderUtils.LOCATION_HEADER);
 
-            assertEquals(expectedRedirectionURI, actualRedirectionURI);
+            assertThat(actualRedirectionURI).isEqualTo(expectedRedirectionURI);
         }
     }
 }
