@@ -46,7 +46,7 @@ public class Controller {
     public HttpResponse login(@QueryParameter(key = "userId") String userId,
                               @QueryParameter(key = "password") String password) throws BadRequestException {
         try {
-            UserDatabase.verifyLoginForm(userId, password);
+            verifyLoginForm(userId, password);
         } catch (BadRequestException e) {
             logger.error(e.getMessage());
             return HttpResponse.generateRedirect("http://localhost:8080/user/login_failed.html");
@@ -67,5 +67,14 @@ public class Controller {
                 .headers(httpMessageHeader)
                 .build();
     }
-}
 
+    private static void verifyLoginForm(String userId, String password) throws BadRequestException {
+        User targetUser = UserDatabase.findUserById(userId);
+        if (targetUser == null) {
+            throw new BadRequestException("존재하지 않는 ID입니다.");
+        }
+        if (!password.equals(targetUser.getPassword())) {
+            throw new BadRequestException("비밀번호가 틀렸습니다.");
+        }
+    }
+}

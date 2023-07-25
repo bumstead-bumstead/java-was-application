@@ -25,16 +25,6 @@ public class UserDatabase {
         }
     }
 
-    public static void verifyLoginForm(String userId, String password) throws BadRequestException {
-        User targetUser = UserDatabase.findUserById(userId);
-        if (targetUser == null) {
-            throw new BadRequestException("존재하지 않는 ID입니다.");
-        }
-        if (!password.equals(targetUser.getPassword())) {
-            throw new BadRequestException("비밀번호가 틀렸습니다.");
-        }
-    }
-
     public static User findUserById(String userId) {
         return users.get(userId);
     }
