@@ -8,7 +8,7 @@ import application.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.annotations.HandleRequest;
-import webserver.annotations.QueryParameter;
+import webserver.annotations.BodyParameter;
 import webserver.exceptions.BadRequestException;
 import webserver.http.message.HttpMethod;
 import webserver.http.message.HttpResponse;
@@ -27,10 +27,10 @@ public class Controller {
     }
 
     @HandleRequest(path = "/user/create", httpMethod = HttpMethod.POST)
-    public HttpResponse createUser(@QueryParameter(key = "userId") String userId,
-                                   @QueryParameter(key = "password") String password,
-                                   @QueryParameter(key = "name") String name,
-                                   @QueryParameter(key = "email") String email) {
+    public HttpResponse createUser(@BodyParameter(key = "userId") String userId,
+                                   @BodyParameter(key = "password") String password,
+                                   @BodyParameter(key = "name") String name,
+                                   @BodyParameter(key = "email") String email) {
         try {
             User user = new User(userId, password, name, email);
             UserDatabase.addUser(user);
@@ -43,8 +43,8 @@ public class Controller {
     }
 
     @HandleRequest(path = "/user/login", httpMethod = HttpMethod.POST)
-    public HttpResponse login(@QueryParameter(key = "userId") String userId,
-                              @QueryParameter(key = "password") String password) throws BadRequestException {
+    public HttpResponse login(@BodyParameter(key = "userId") String userId,
+                              @BodyParameter(key = "password") String password) throws BadRequestException {
         try {
             verifyLoginForm(userId, password);
         } catch (BadRequestException e) {

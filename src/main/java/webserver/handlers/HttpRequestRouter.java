@@ -2,8 +2,8 @@ package webserver.handlers;
 
 import application.Controller.Controller;
 import webserver.annotations.HandleRequest;
-import webserver.annotations.PathParameter;
 import webserver.annotations.QueryParameter;
+import webserver.annotations.BodyParameter;
 import webserver.exceptions.BadRequestException;
 import webserver.exceptions.PathNotFoundException;
 import webserver.http.HttpMethodHandlerMapping;
@@ -75,8 +75,8 @@ public class HttpRequestRouter {
 
         //어노테이션이 있는 (꼭 입력해야하는) 매개 변수 리스트
         List<Parameter> arguments = Arrays.stream(method.getParameters())
-                .filter(argument -> argument.isAnnotationPresent(PathParameter.class)
-                        || argument.isAnnotationPresent(QueryParameter.class))
+                .filter(argument -> argument.isAnnotationPresent(QueryParameter.class)
+                        || argument.isAnnotationPresent(BodyParameter.class))
                 .collect(Collectors.toList());
 
         //필요한 모든 매개 변수를 입력 받았는지 검증
@@ -84,10 +84,10 @@ public class HttpRequestRouter {
 
         //맵에서 찾아서 순서대로 반환
         return arguments.stream().map(argument -> {
-            if (argument.isAnnotationPresent(PathParameter.class)) {
-                return pathParameters.get(argument.getAnnotation(PathParameter.class).key());
+            if (argument.isAnnotationPresent(QueryParameter.class)) {
+                return pathParameters.get(argument.getAnnotation(QueryParameter.class).key());
             }
-            return queryParameters.get(argument.getAnnotation(QueryParameter.class).key());
+            return queryParameters.get(argument.getAnnotation(BodyParameter.class).key());
         }).toArray();
     }
 
@@ -95,13 +95,13 @@ public class HttpRequestRouter {
                                                  Map<String, String> queryParameters,
                                                  List<Parameter> arguments) throws BadRequestException {
         for (Parameter argument : arguments) {
-            if (argument.isAnnotationPresent(PathParameter.class)
-                    && !pathParameters.containsKey(argument.getAnnotation(PathParameter.class).key())) {
+            if (argument.isAnnotationPresent(QueryParameter.class)
+                    && !pathParameters.containsKey(argument.getAnnotation(QueryParameter.class).key())) {
                 throw new BadRequestException("유효하지 않은 매개 변수");
             }
 
-            if (argument.isAnnotationPresent(QueryParameter.class)
-                    && !queryParameters.containsKey(argument.getAnnotation(QueryParameter.class).key())) {
+            if (argument.isAnnotationPresent(BodyParameter.class)
+                    && !queryParameters.containsKey(argument.getAnnotation(BodyParameter.class).key())) {
                 throw new BadRequestException("유효하지 않은 매개 변수");
             }
         }
