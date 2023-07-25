@@ -1,19 +1,21 @@
 package webserver.http.message.parser;
 
-import webserver.http.session.Cookie;
 import webserver.http.message.*;
-import webserver.utils.StringUtils;
 import webserver.http.message.parser.body.RequestBodyParserManager;
+import webserver.http.session.Cookie;
+import webserver.utils.StringUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static webserver.http.message.URI.*;
+import static java.net.URLDecoder.decode;
 import static webserver.http.message.HttpHeaderUtils.*;
+import static webserver.http.message.URI.*;
 
 public class HttpMessageParser {
 
@@ -70,7 +72,7 @@ public class HttpMessageParser {
 
     public static HttpRequest parseHttpRequest(InputStream inputStream) throws Exception {
         HttpRequest.Builder httpRequestBuilder = new HttpRequest.Builder();
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
         List<String> requestLine = parseRequestLine(bufferedReader);
@@ -107,7 +109,7 @@ public class HttpMessageParser {
         char[] buffer = new char[contentLength];
         bufferedReader.read(buffer, 0, contentLength);
 
-        return new String(buffer);
+        return decode(new String(buffer));
     }
 
     private static URI parseURI(String stringURI) {
@@ -171,12 +173,12 @@ public class HttpMessageParser {
     }
 
     private static HttpMessageHeader parseHeaders(BufferedReader bufferedReader) throws IOException {
-        String line = bufferedReader.readLine();
+        String line = decode(bufferedReader.readLine());
         HttpMessageHeader.Builder headerBuilder = new HttpMessageHeader.Builder();
 
         while (isHeaderLeft(line)) {
             String[] field = line.split(HEADER_SEPARATOR + QUERY_SEPARATOR, 2);
-            line = bufferedReader.readLine();
+            line = decode(bufferedReader.readLine());
             if (REQUEST_COOKIE_HEADER.equals(field[0])) {
                 addCookies(headerBuilder, field[1]);
                 continue;
