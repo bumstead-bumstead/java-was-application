@@ -1,19 +1,19 @@
 package application.Controller;
 
-import webserver.http.session.SessionDatabase;
+import application.HTMLRenderer.HTMLRendererManager;
 import application.db.UserDatabase;
-import webserver.http.session.Cookie;
-import webserver.http.session.Session;
 import application.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.annotations.HandleRequest;
 import webserver.annotations.BodyParameter;
+import webserver.annotations.HandleRequest;
 import webserver.exceptions.BadRequestException;
-import webserver.http.message.HttpMethod;
-import webserver.http.message.HttpResponse;
-import webserver.http.message.HttpMessageHeader;
-import webserver.http.message.StatusCode;
+import webserver.http.message.*;
+import webserver.http.session.Cookie;
+import webserver.http.session.Session;
+import webserver.http.session.SessionDatabase;
+
+import java.util.Map;
 
 public class Controller {
     private static final Logger logger = LoggerFactory.getLogger(Controller.class);
@@ -24,6 +24,30 @@ public class Controller {
 
     public static Controller getInstance() {
         return SingletonHelper.CONTROLLER;
+    }
+
+    @HandleRequest(path = "/index.html", httpMethod = HttpMethod.GET)
+    public HttpResponse index(Session session) throws Exception {
+        byte[] body;
+
+        if (session == null) {
+            body = HTMLRendererManager.render("/index.html", Map.of());
+        }
+        else {
+            String userId = (String) session.getAttribute("userId");
+            User user = UserDatabase.findUserById(userId);
+            body = HTMLRendererManager.render("/index.html", Map.of("name", user.getName()));
+        }
+
+        HttpMessageHeader headers = new HttpMessageHeader.Builder()
+                .addContentLength(body.length)
+                .addContentType(MIME.HTML.contentType)
+                .build();
+
+        return new HttpResponse.Builder()
+                .headers(headers)
+                .body(body)
+                .build();
     }
 
     @HandleRequest(path = "/user/create", httpMethod = HttpMethod.POST)
