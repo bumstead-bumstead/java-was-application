@@ -1,6 +1,6 @@
 package utils;
 
-import application.model.Cookie;
+import webserver.http.session.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import webserver.http.message.*;

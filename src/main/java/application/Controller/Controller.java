@@ -1,9 +1,9 @@
 package application.Controller;
 
-import application.db.SessionDatabase;
+import webserver.http.session.SessionDatabase;
 import application.db.UserDatabase;
-import application.model.Cookie;
-import application.model.Session;
+import webserver.http.session.Cookie;
+import webserver.http.session.Session;
 import application.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +53,7 @@ public class Controller {
         }
 
         Session session = new Session();
+        session.addAttribute("userId", userId);
         SessionDatabase.addSession(session);
 
         Cookie cookie = new Cookie("sid", session.getId());

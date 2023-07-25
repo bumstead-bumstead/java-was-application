@@ -1,4 +1,4 @@
-package application.model;
+package webserver.http.session;
 
 import java.util.Objects;
 

@@ -1,6 +1,4 @@
-package application.db;
-
-import application.model.Session;
+package webserver.http.session;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

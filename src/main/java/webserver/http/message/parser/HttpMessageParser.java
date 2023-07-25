@@ -1,6 +1,6 @@
 package webserver.http.message.parser;
 
-import application.model.Cookie;
+import webserver.http.session.Cookie;
 import webserver.http.message.*;
 import webserver.utils.StringUtils;
 import webserver.http.message.parser.body.RequestBodyParserManager;

@@ -1,9 +1,9 @@
 package Controller;
 
 import application.Controller.Controller;
-import application.db.SessionDatabase;
+import webserver.http.session.SessionDatabase;
 import application.db.UserDatabase;
-import application.model.Cookie;
+import webserver.http.session.Cookie;
 import application.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
