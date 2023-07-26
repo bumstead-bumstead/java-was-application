@@ -34,14 +34,38 @@ public class Controller {
 
         if (session == null) {
             parameters.put("user", null);
-        }
-        else {
+        } else {
             String userId = (String) session.getAttribute("userId");
             User user = UserDatabase.findUserById(userId);
             parameters.put("user", user);
         }
 
         body = HTMLRendererManager.render("/index.html", parameters);
+
+        HttpMessageHeader headers = new HttpMessageHeader.Builder()
+                .addContentLength(body.length)
+                .addContentType(MIME.HTML.contentType)
+                .build();
+
+        return new HttpResponse.Builder()
+                .headers(headers)
+                .body(body)
+                .build();
+    }
+
+    @HandleRequest(path = "/user/list", httpMethod = HttpMethod.GET)
+    public HttpResponse userList(Session session) throws BadRequestException {
+        Map<String, Object> parameters = new HashMap<>();
+
+        if (session == null) {
+            return HttpResponse.generateRedirect("http://localhost:8080/user/login.html");
+        }
+
+        String userId = (String) session.getAttribute("userId");
+        User user = UserDatabase.findUserById(userId);
+        parameters.put("user", user);
+
+        byte[] body = HTMLRendererManager.render("/user/list", parameters);
 
         HttpMessageHeader headers = new HttpMessageHeader.Builder()
                 .addContentLength(body.length)

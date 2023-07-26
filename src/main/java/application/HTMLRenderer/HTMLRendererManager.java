@@ -11,6 +11,7 @@ public class HTMLRendererManager {
     static {
         rendererMap = new ConcurrentHashMap<>();
         rendererMap.put("/index.html", new IndexRenderer());
+        rendererMap.put("/user/list", new UserListRenderer());
     }
 
     public static byte[] render(String path, Map<String, Object> parameters) throws BadRequestException {
