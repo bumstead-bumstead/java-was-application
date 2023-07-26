@@ -59,13 +59,14 @@ public class HttpRequestRouter {
                 Object[] argumentValues = getRequiredParameters(bodyParameters, uri, session, method);
                 return executeMethod(method, argumentValues);
             }
-
             //정적인 리소스로 취급하고 처리
             return StaticResourceHandler.handle(httpRequest);
         } catch (PathNotFoundException e) {
             return HttpResponse.generateError(StatusCode.NOT_FOUND);
         } catch (BadRequestException e) {
             return HttpResponse.generateError(StatusCode.BAD_REQUEST);
+        } catch (Exception e) {
+            return HttpResponse.generateError(StatusCode.INTERNAL_SERVER_ERROR);
         }
     }
 
