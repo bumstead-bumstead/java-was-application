@@ -24,7 +24,7 @@ public class RequestRouterTest {
     @BeforeEach
     void setUp() {
         UserDatabase.clear();
-        requestRouter = new HttpRequestRouter();
+        requestRouter = HttpRequestRouter.getInstance();
     }
 
     @ParameterizedTest
