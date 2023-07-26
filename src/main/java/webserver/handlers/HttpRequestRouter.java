@@ -25,7 +25,7 @@ public class HttpRequestRouter {
     //set default for test
     static HttpMethodHandlerMapping requestMappings;
 
-    static {
+    private HttpRequestRouter() {
         requestMappings = new HttpMethodHandlerMapping();
         requestMappings.initialize();
 
