@@ -1,11 +1,13 @@
 package application.HTMLRenderer;
 
+import application.model.User;
+
 import java.util.Map;
 
 class IndexRenderer implements HTMLRenderer {
     @Override
     public byte[] render(Map<String, Object> parameters) {
-        String name = (String) parameters.get("name");
+        User user = (User) parameters.get("user");
         StringBuilder htmlBuilder = new StringBuilder();
 
         htmlBuilder.append("<!DOCTYPE html>\n");
@@ -71,13 +73,13 @@ class IndexRenderer implements HTMLRenderer {
         htmlBuilder.append("<div class=\"collapse navbar-collapse\" id=\"navbar-collapse2\">\n");
         htmlBuilder.append("<ul class=\"nav navbar-nav navbar-right\">\n");
 
-        if(name == null) {
+        if(user == null) {
             htmlBuilder.append("<li class=\"active\"><a href=\"index.html\">Posts</a></li>\n");
             htmlBuilder.append("<li><a href=\"user/login.html\" role=\"button\">로그인</a></li>\n");
             htmlBuilder.append("<li><a href=\"user/form.html\" role=\"button\">회원가입</a></li>\n");
         } else {
             htmlBuilder.append("<li><a role=\"button\">")
-                    .append(name)
+                    .append(user.getName())
                     .append("</a></li>\n");
             htmlBuilder.append("<li class=\"active\"><a href=\"index.html\">Posts</a></li>\n");
             htmlBuilder.append("<li><a href=\"#\" role=\"button\">로그아웃</a></li>\n");

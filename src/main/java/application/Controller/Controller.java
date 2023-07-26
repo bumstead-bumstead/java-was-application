@@ -13,6 +13,7 @@ import webserver.http.session.Cookie;
 import webserver.http.session.Session;
 import webserver.http.session.SessionDatabase;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Controller {
@@ -29,15 +30,18 @@ public class Controller {
     @HandleRequest(path = "/index.html", httpMethod = HttpMethod.GET)
     public HttpResponse index(Session session) throws Exception {
         byte[] body;
+        Map<String, Object> parameters = new HashMap<>();
 
         if (session == null) {
-            body = HTMLRendererManager.render("/index.html", Map.of());
+            parameters.put("user", null);
         }
         else {
             String userId = (String) session.getAttribute("userId");
             User user = UserDatabase.findUserById(userId);
-            body = HTMLRendererManager.render("/index.html", Map.of("name", user.getName()));
+            parameters.put("user", user);
         }
+
+        body = HTMLRendererManager.render("/index.html", parameters);
 
         HttpMessageHeader headers = new HttpMessageHeader.Builder()
                 .addContentLength(body.length)
