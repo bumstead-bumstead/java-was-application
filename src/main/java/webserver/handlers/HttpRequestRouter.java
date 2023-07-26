@@ -56,8 +56,8 @@ public class HttpRequestRouter {
             //매핑된 메소드가 존재하는 경우, 해당 메소드가 처리
             if (requestMappings.containsCapableMethod(uri.getPath(), httpRequest.getHttpMethod())) {
                 Method method = requestMappings.getMappedMethod(uri.getPath(), httpRequest.getHttpMethod());
-                Object[] argumentValues = extractParameterValues(method, uri.getParameters(), bodyParameters);
-                return executeMethod(session, method, argumentValues);
+                Object[] argumentValues = getRequiredParameters(bodyParameters, uri, session, method);
+                return executeMethod(method, argumentValues);
             }
 
             //정적인 리소스로 취급하고 처리
@@ -69,10 +69,7 @@ public class HttpRequestRouter {
         }
     }
 
-    private HttpResponse executeMethod(Session session, Method method, Object[] argumentValues) throws IllegalAccessException, InvocationTargetException {
-        if (requireSession(method)) {
-            argumentValues = addSessionToArgument(session, argumentValues);
-        }
+    private HttpResponse executeMethod(Method method, Object[] argumentValues) throws IllegalAccessException, InvocationTargetException {
         return (HttpResponse) method.invoke(Controller.getInstance(), argumentValues);
     }
 
@@ -89,6 +86,14 @@ public class HttpRequestRouter {
             return null;
         }
         return SessionDatabase.findSession(sessionCookie.getValue());
+    }
+
+    private Object[] getRequiredParameters(Map<String, String> bodyParameters, URI uri, Session session, Method method) throws BadRequestException {
+        Object[] argumentValues = extractParameterValues(method, uri.getParameters(), bodyParameters);
+        if (requireSession(method)) {
+            argumentValues = addSessionToArgument(session, argumentValues);
+        }
+        return argumentValues;
     }
 
     private boolean requireSession(Method method) {
