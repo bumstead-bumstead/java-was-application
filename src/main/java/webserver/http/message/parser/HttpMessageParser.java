@@ -177,13 +177,15 @@ public class HttpMessageParser {
         HttpMessageHeader.Builder headerBuilder = new HttpMessageHeader.Builder();
 
         while (isHeaderLeft(line)) {
+            line = decode(line);
             String[] field = line.split(HEADER_SEPARATOR + QUERY_SEPARATOR, 2);
-            line = decode(bufferedReader.readLine());
             if (REQUEST_COOKIE_HEADER.equals(field[0])) {
                 addCookies(headerBuilder, field[1]);
-                continue;
             }
-            headerBuilder.addHeader(field[0], field[1]);
+            else {
+                headerBuilder.addHeader(field[0], field[1]);
+            }
+            line = bufferedReader.readLine();
         }
 
         return headerBuilder.build();
@@ -195,7 +197,7 @@ public class HttpMessageParser {
 
     private static void addCookies(HttpMessageHeader.Builder headerBuilder, String cookies) {
         Arrays.stream(cookies.split("; "))
-                .map((cookie) -> cookies.split("="))
+                .map((cookie) -> cookie.split("="))
                 .forEach((cookieEntry) -> headerBuilder.addCookie(new Cookie(cookieEntry[0], cookieEntry[1])));
     }
 }
