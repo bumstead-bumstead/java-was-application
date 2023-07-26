@@ -205,4 +205,52 @@ class ControllerTest {
             assertThat(body).doesNotContain("개인정보조회");
         }
     }
+
+    @Nested
+    @DisplayName("/user/list 테스트")
+    class userList {
+        Controller controller;
+        String userId;
+        String password;
+        String name;
+        String email;
+
+        @BeforeEach
+        void setup() throws BadRequestException {
+            UserDatabase.clear();
+            controller = Controller.getInstance();
+            userId = "userId";
+            password = "password";
+            name = "name";
+            email = "asdsda@dasads";
+
+            controller.createUser(userId, password, name, email);
+            controller.login(userId, password);
+        }
+
+        @Test
+        @DisplayName("유효한 세션이 있는 경우 유저 정보를 모두 보여준다.")
+        void getListWithSession() throws Exception {
+            Session session = new Session();
+            session.addAttribute("userId", "userId");
+            SessionDatabase.addSession(session);
+
+            HttpResponse httpResponse = controller.userList(session);
+            String body = new String(httpResponse.getBody());
+
+            assertThat(body).contains(userId);
+            assertThat(body).contains(name);
+            assertThat(body).contains(email);
+        }
+
+        @Test
+        @DisplayName("세션이 존재하지 않는 경우 login.html로 redirection한다.")
+        void getListWithoutSession() throws BadRequestException {
+            HttpResponse httpResponse = controller.userList(null);
+
+            assertThat(httpResponse.getStatusCode()).isEqualTo(StatusCode.FOUND);
+            assertThat(httpResponse.getHeaders().getValue("Location")).contains("login.html");
+
+        }
+    }
 }
