@@ -1,6 +1,6 @@
 package Controller;
 
-import application.Controller.Controller;
+import application.serviceManager.ServiceManager;
 import webserver.http.session.Session;
 import webserver.http.session.SessionDatabase;
 import application.db.UserDatabase;
@@ -18,11 +18,11 @@ import webserver.http.message.StatusCode;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ControllerTest {
+class ServiceManagerTest {
     @Nested
     @DisplayName("유저 생성 테스트")
     class CreateUser {
-        Controller controller;
+        ServiceManager serviceManager;
         String userId;
         String password;
         String name;
@@ -31,7 +31,7 @@ class ControllerTest {
         @BeforeEach
         void setup() {
             UserDatabase.clear();
-            controller = Controller.getInstance();
+            serviceManager = ServiceManager.getInstance();
             userId = "userId";
             password = "password";
             name = "name";
@@ -41,7 +41,7 @@ class ControllerTest {
         @Test
         @DisplayName("올바른 입력에 대해서 응답으로 302번 코드를 보낸다.")
         void createUserTest() {
-            HttpResponse httpResponse = controller.createUser(userId, password, name, email);
+            HttpResponse httpResponse = serviceManager.createUser(userId, password, name, email);
 
             assertThat(httpResponse.getStatusCode()).isEqualTo(StatusCode.FOUND);
             assertThat(httpResponse.getHeaders().containsKey("Location")).isTrue();
@@ -50,7 +50,7 @@ class ControllerTest {
         @Test
         @DisplayName("데이터베이스에 유저 정보를 저장한다.")
         void uploadToDatabase() {
-            controller.createUser(userId, password, name, email);
+            serviceManager.createUser(userId, password, name, email);
 
             User actualUser = UserDatabase.findUserById("userId");
             User expectedUser = new User(userId, password, name, email);
@@ -62,7 +62,7 @@ class ControllerTest {
     @Nested
     @DisplayName("유저 로그인 테스트")
     class login {
-        Controller controller;
+        ServiceManager serviceManager;
         String userId;
         String password;
         String name;
@@ -71,19 +71,19 @@ class ControllerTest {
         @BeforeEach
         void setup() {
             UserDatabase.clear();
-            controller = Controller.getInstance();
+            serviceManager = ServiceManager.getInstance();
             userId = "userId";
             password = "password";
             name = "name";
             email = "asdsda@dasads";
 
-            controller.createUser(userId, password, name, email);
+            serviceManager.createUser(userId, password, name, email);
         }
 
         @Test
         @DisplayName("올바른 로그인에 대해서 302를 응답으로 보낸다.")
         void login() throws BadRequestException {
-            HttpResponse httpResponse = controller.login(userId, password);
+            HttpResponse httpResponse = serviceManager.login(userId, password);
 
             assertThat(httpResponse.getStatusCode()).isEqualTo(StatusCode.FOUND);
         }
@@ -92,7 +92,7 @@ class ControllerTest {
         @DisplayName("올바른 로그인 후에는 세션을 저장한다.")
         void loginSessionTest() throws BadRequestException {
             SessionDatabase.clear();
-            HttpResponse httpResponse = controller.login(userId, password);
+            HttpResponse httpResponse = serviceManager.login(userId, password);
 
             assertThat(SessionDatabase.size()).isEqualTo(1);
         }
@@ -100,7 +100,7 @@ class ControllerTest {
         @Test
         @DisplayName("올바른 로그인일 경우 응답 헤더에 cookie를 포함시킨다.")
         void loginCookieTest() throws BadRequestException {
-            HttpResponse httpResponse = controller.login(userId, password);
+            HttpResponse httpResponse = serviceManager.login(userId, password);
             HttpMessageHeader headers = httpResponse.getHeaders();
 
             assertThat(headers.getCookies().size()).isGreaterThan(0);
@@ -113,7 +113,7 @@ class ControllerTest {
         @DisplayName("존재하지 않는 id인 경우, /user/login_failed.html로 redirection")
         void loginWithWrongId() throws BadRequestException {
             userId = "modifiedId";
-            HttpResponse httpResponse = controller.login(userId, password);
+            HttpResponse httpResponse = serviceManager.login(userId, password);
 
             String expectedRedirectionURI = "http://localhost:8080/user/login_failed.html";
             String actualRedirectionURI = httpResponse.getHeaders().getValue(HttpHeaderUtils.LOCATION_HEADER);
@@ -126,7 +126,7 @@ class ControllerTest {
         @DisplayName("비밀번호가 일치하지 않는 경우, /user/login_failed.html로 redirection")
         void loginWithWrongPwd() throws BadRequestException {
             password = "wrongPassword";
-            HttpResponse httpResponse = controller.login(userId, password);
+            HttpResponse httpResponse = serviceManager.login(userId, password);
 
             String expectedRedirectionURI = "http://localhost:8080/user/login_failed.html";
             String actualRedirectionURI = httpResponse.getHeaders().getValue(HttpHeaderUtils.LOCATION_HEADER);
@@ -138,7 +138,7 @@ class ControllerTest {
     @Nested
     @DisplayName("index.html 테스트")
     class index {
-        Controller controller;
+        ServiceManager serviceManager;
         String userId;
         String password;
         String name;
@@ -147,14 +147,14 @@ class ControllerTest {
         @BeforeEach
         void setup() throws BadRequestException {
             UserDatabase.clear();
-            controller = Controller.getInstance();
+            serviceManager = ServiceManager.getInstance();
             userId = "userId";
             password = "password";
             name = "name";
             email = "asdsda@dasads";
 
-            controller.createUser(userId, password, name, email);
-            controller.login(userId, password);
+            serviceManager.createUser(userId, password, name, email);
+            serviceManager.login(userId, password);
         }
 
         @Test
@@ -164,7 +164,7 @@ class ControllerTest {
             session.addAttribute("userId", "userId");
             SessionDatabase.addSession(session);
 
-            HttpResponse httpResponse = controller.index(session);
+            HttpResponse httpResponse = serviceManager.index(session);
             String body = new String(httpResponse.getBody());
 
             assertThat(body).contains("name");
@@ -178,7 +178,7 @@ class ControllerTest {
         @Test
         @DisplayName("유효한 세션이 없는 경우 로그인/회원가입을 보여준다.")
         void indexWithoutSession() throws Exception {
-            HttpResponse httpResponse = controller.index(null);
+            HttpResponse httpResponse = serviceManager.index(null);
             String body = new String(httpResponse.getBody());
 
             assertThat(body).contains("로그인");
@@ -195,7 +195,7 @@ class ControllerTest {
             session.addAttribute("userId", "d");
             SessionDatabase.addSession(session);
 
-            HttpResponse httpResponse = controller.index(session);
+            HttpResponse httpResponse = serviceManager.index(session);
 
             String body = new String(httpResponse.getBody());
 
@@ -209,7 +209,7 @@ class ControllerTest {
     @Nested
     @DisplayName("/user/list 테스트")
     class userList {
-        Controller controller;
+        ServiceManager serviceManager;
         String userId;
         String password;
         String name;
@@ -218,14 +218,14 @@ class ControllerTest {
         @BeforeEach
         void setup() throws BadRequestException {
             UserDatabase.clear();
-            controller = Controller.getInstance();
+            serviceManager = ServiceManager.getInstance();
             userId = "userId";
             password = "password";
             name = "name";
             email = "asdsda@dasads";
 
-            controller.createUser(userId, password, name, email);
-            controller.login(userId, password);
+            serviceManager.createUser(userId, password, name, email);
+            serviceManager.login(userId, password);
         }
 
         @Test
@@ -235,7 +235,7 @@ class ControllerTest {
             session.addAttribute("userId", "userId");
             SessionDatabase.addSession(session);
 
-            HttpResponse httpResponse = controller.userList(session);
+            HttpResponse httpResponse = serviceManager.userList(session);
             String body = new String(httpResponse.getBody());
 
             assertThat(body).contains(userId);
@@ -246,7 +246,7 @@ class ControllerTest {
         @Test
         @DisplayName("세션이 존재하지 않는 경우 login.html로 redirection한다.")
         void getListWithoutSession() throws BadRequestException {
-            HttpResponse httpResponse = controller.userList(null);
+            HttpResponse httpResponse = serviceManager.userList(null);
 
             assertThat(httpResponse.getStatusCode()).isEqualTo(StatusCode.FOUND);
             assertThat(httpResponse.getHeaders().getValue("Location")).contains("login.html");

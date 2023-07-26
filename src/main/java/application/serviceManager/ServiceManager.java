@@ -1,4 +1,4 @@
-package application.Controller;
+package application.serviceManager;
 
 import application.HTMLRenderer.HTMLRendererManager;
 import application.db.UserDatabase;
@@ -16,15 +16,15 @@ import webserver.http.session.SessionDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Controller {
-    private static final Logger logger = LoggerFactory.getLogger(Controller.class);
+public class ServiceManager {
+    private static final Logger logger = LoggerFactory.getLogger(ServiceManager.class);
 
     private static class SingletonHelper {
-        private static final Controller CONTROLLER = new Controller();
+        private static final ServiceManager SERVICE_MANAGER = new ServiceManager();
     }
 
-    public static Controller getInstance() {
-        return SingletonHelper.CONTROLLER;
+    public static ServiceManager getInstance() {
+        return SingletonHelper.SERVICE_MANAGER;
     }
 
     @HandleRequest(path = "/index.html", httpMethod = HttpMethod.GET)
