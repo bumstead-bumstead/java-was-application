@@ -18,6 +18,8 @@ import static webserver.http.message.HttpHeaderUtils.*;
 import static webserver.http.message.URI.*;
 
 public class HttpMessageParser {
+    private HttpMessageParser() {
+    }
 
 
     public static ByteArrayOutputStream parseHttpResponse(HttpResponse httpResponse) throws IOException {
