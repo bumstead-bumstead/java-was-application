@@ -1,4 +1,4 @@
-package application.serviceManager;
+package application.RequestProcessor;
 
 import application.HTMLRenderer.HTMLRendererManager;
 import application.db.UserDatabase;
@@ -16,14 +16,14 @@ import webserver.http.session.SessionDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ServiceManager {
-    private static final Logger logger = LoggerFactory.getLogger(ServiceManager.class);
+public class RequestProcessor {
+    private static final Logger logger = LoggerFactory.getLogger(RequestProcessor.class);
 
     private static class SingletonHelper {
-        private static final ServiceManager SERVICE_MANAGER = new ServiceManager();
+        private static final RequestProcessor SERVICE_MANAGER = new RequestProcessor();
     }
 
-    public static ServiceManager getInstance() {
+    public static RequestProcessor getInstance() {
         return SingletonHelper.SERVICE_MANAGER;
     }
 
@@ -41,14 +41,8 @@ public class ServiceManager {
         }
 
         body = HTMLRendererManager.render("/index.html", parameters);
-
-        HttpMessageHeader headers = new HttpMessageHeader.Builder()
-                .addContentLength(body.length)
-                .addContentType(MIME.HTML.contentType)
-                .build();
-
         return new HttpResponse.Builder()
-                .headers(headers)
+                .headers(HttpMessageHeader.generateDefaultHeader(body, MIME.HTML.contentType))
                 .body(body)
                 .build();
     }
@@ -66,14 +60,26 @@ public class ServiceManager {
         parameters.put("user", user);
 
         byte[] body = HTMLRendererManager.render("/user/list", parameters);
-
-        HttpMessageHeader headers = new HttpMessageHeader.Builder()
-                .addContentLength(body.length)
-                .addContentType(MIME.HTML.contentType)
-                .build();
-
         return new HttpResponse.Builder()
-                .headers(headers)
+                .headers(HttpMessageHeader.generateDefaultHeader(body, MIME.HTML.contentType))
+                .body(body)
+                .build();
+    }
+
+    @HandleRequest(path = "/user/login.html", httpMethod = HttpMethod.GET)
+    public HttpResponse loginPage(Session session) throws BadRequestException {
+        Map<String, Object> parameters = new HashMap<>();
+
+        //Session 없을 시 비워서 보내기
+        if (session != null) {
+            String userId = (String) session.getAttribute("userId");
+            User user = UserDatabase.findUserById(userId);
+            parameters.put("user", user);
+        }
+
+        byte[] body = HTMLRendererManager.render("/user/login.html", parameters);
+        return new HttpResponse.Builder()
+                .headers(HttpMessageHeader.generateDefaultHeader(body, MIME.HTML.contentType))
                 .body(body)
                 .build();
     }

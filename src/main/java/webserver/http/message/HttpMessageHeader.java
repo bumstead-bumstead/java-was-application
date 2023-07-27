@@ -18,10 +18,12 @@ public class HttpMessageHeader {
         private Map<String, String> headerMap;
 
         private List<Cookie> cookies;
+
         public Builder() {
             this.headerMap = new HashMap<>();
             this.cookies = new ArrayList<>();
         }
+
         public Builder addHeader(String key, String value) {
             headerMap.put(key, value);
             return this;
@@ -56,6 +58,23 @@ public class HttpMessageHeader {
 
 
     }
+
+    public Cookie getCookie(String name) {
+        for (Cookie cookie : cookies) {
+            if (name.equals(cookie.getName())) {
+                return cookie;
+            }
+        }
+        return null;
+    }
+
+    public static HttpMessageHeader generateDefaultHeader(byte[] body, String contentType) {
+        return new HttpMessageHeader.Builder()
+                .addContentLength(body.length)
+                .addContentType(contentType)
+                .build();
+    }
+
     public String getValue(String key) {
         return headerMap.get(key);
     }
@@ -70,15 +89,6 @@ public class HttpMessageHeader {
 
     public Map<String, String> getHeaderMap() {
         return headerMap;
-    }
-
-    public Cookie getCookie(String name) {
-        for (Cookie cookie : cookies) {
-            if (name.equals(cookie.getName())) {
-                return cookie;
-            }
-        }
-        return null;
     }
 
     @Override

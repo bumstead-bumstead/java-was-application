@@ -1,6 +1,6 @@
 package webserver.handlers;
 
-import application.serviceManager.ServiceManager;
+import application.RequestProcessor.RequestProcessor;
 import webserver.annotations.BodyParameter;
 import webserver.annotations.HandleRequest;
 import webserver.annotations.QueryParameter;
@@ -29,7 +29,7 @@ public class HttpRequestRouter {
         requestMappings = new HttpMethodHandlerMapping();
         requestMappings.initialize();
 
-        Method[] methods = ServiceManager.class.getDeclaredMethods();
+        Method[] methods = RequestProcessor.class.getDeclaredMethods();
 
         for (Method method : methods) {
             if (method.isAnnotationPresent(HandleRequest.class)) {
@@ -71,7 +71,7 @@ public class HttpRequestRouter {
     }
 
     private HttpResponse executeMethod(Method method, Object[] argumentValues) throws IllegalAccessException, InvocationTargetException {
-        return (HttpResponse) method.invoke(ServiceManager.getInstance(), argumentValues);
+        return (HttpResponse) method.invoke(RequestProcessor.getInstance(), argumentValues);
     }
 
     private static Object[] addSessionToArgument(Session session, Object[] argumentValues) {
