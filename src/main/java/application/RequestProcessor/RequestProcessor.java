@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.annotations.BodyParameter;
 import webserver.annotations.HandleRequest;
+import webserver.annotations.QueryParameter;
 import webserver.exceptions.BadRequestException;
 import webserver.http.message.*;
 import webserver.http.session.Cookie;
@@ -161,21 +162,6 @@ public class RequestProcessor {
         }
     }
 
-    @HandleRequest(path = "/board/create", httpMethod = HttpMethod.POST)
-    public HttpResponse createBoard(@BodyParameter(key = "writer") String writer,
-                                   @BodyParameter(key = "title") String title,
-                                   @BodyParameter(key = "contents") String contents,
-                                    Session session) {
-        if (session == null) {
-            return HttpResponse.generateRedirect("http://localhost:8080/user/login.html");
-        }
-
-        Board board = new Board(writer, LocalDate.now(), title, contents);
-        BoardDatabase.addBoard(board);
-
-        return HttpResponse.generateRedirect("http://localhost:8080/index.html");
-    }
-
     @HandleRequest(path = "/qna/form.html", httpMethod = HttpMethod.GET)
     public HttpResponse qnaPage(Session session) throws BadRequestException {
         Map<String, Object> parameters = new HashMap<>();
@@ -192,4 +178,46 @@ public class RequestProcessor {
                 .body(body)
                 .build();
     }
+
+    @HandleRequest(path = "/qna/show.html", httpMethod = HttpMethod.GET)
+    public HttpResponse boardDetailsPage(@QueryParameter(key = "boardNumber") String boardNumber,
+                                         Session session) throws BadRequestException {
+        Map<String, Object> parameters = new HashMap<>();
+
+        if (session == null) {
+            return HttpResponse.generateRedirect("http://localhost:8080/user/login.html");
+        }
+
+        Board board = BoardDatabase.findAll().get(Integer.parseInt(boardNumber));
+
+        parameters.put("board", board);
+
+        String userId = (String) session.getAttribute("userId");
+        User user = UserDatabase.findUserById(userId);
+        parameters.put("user", user);
+
+
+        byte[] body = htmlRendererManager.render("/qna/show.html", parameters);
+
+        return new HttpResponse.Builder()
+                .headers(HttpMessageHeader.generateDefaultHeader(body, MIME.HTML.contentType))
+                .body(body)
+                .build();
+    }
+
+    @HandleRequest(path = "/board/create", httpMethod = HttpMethod.POST)
+    public HttpResponse createBoard(@BodyParameter(key = "writer") String writer,
+                                    @BodyParameter(key = "title") String title,
+                                    @BodyParameter(key = "contents") String contents,
+                                    Session session) {
+        if (session == null) {
+            return HttpResponse.generateRedirect("http://localhost:8080/user/login.html");
+        }
+
+        Board board = new Board(writer, LocalDate.now(), title, contents);
+        BoardDatabase.addBoard(board);
+
+        return HttpResponse.generateRedirect("http://localhost:8080/index.html");
+    }
+
 }

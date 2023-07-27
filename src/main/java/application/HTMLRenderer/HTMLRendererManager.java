@@ -19,6 +19,7 @@ public class HTMLRendererManager {
         rendererMap.put("/user/login.html", new LoginRenderer());
         rendererMap.put("/user/form.html", new SignUpRenderer());
         rendererMap.put("/qna/form.html", new BoardFormRenderer());
+        rendererMap.put("/qna/show.html", new BoardDetailsRenderer());
     }
 
     public static HTMLRendererManager getInstance() {

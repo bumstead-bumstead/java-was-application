@@ -13,6 +13,7 @@ class IndexRenderer implements HTMLRenderer {
         User user = (User) parameters.get("user");
         List<Board> boardList = BoardDatabase.findAll();
         StringBuilder htmlBuilder = new StringBuilder();
+        int index = 0;
 
         htmlBuilder.append("<!DOCTYPE html>\n");
         htmlBuilder.append("<html lang=\"kr\">\n");
@@ -97,13 +98,14 @@ class IndexRenderer implements HTMLRenderer {
         htmlBuilder.append("<div class=\"col-md-12 col-sm-12 col-lg-10 col-lg-offset-1\">\n");
         htmlBuilder.append("<div class=\"panel panel-default qna-list\">\n");
         htmlBuilder.append("<ul class=\"list\">\n");
-
         for (Board board : boardList) {
             htmlBuilder.append("<li>\n");
             htmlBuilder.append("<div class=\"wrap\">\n");
             htmlBuilder.append("<div class=\"main\">\n");
             htmlBuilder.append("<strong class=\"subject\">\n");
-            htmlBuilder.append("<a href=\"./qna/show.html\">")
+            htmlBuilder.append("<a href=\"./qna/show.html?boardNumber=")
+                    .append(index++)
+                    .append("\">")
                     .append(board.getTitle())
                     .append("</a>\n");
             htmlBuilder.append("</strong>\n");
