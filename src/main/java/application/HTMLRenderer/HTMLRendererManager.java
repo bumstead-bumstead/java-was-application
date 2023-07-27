@@ -11,7 +11,7 @@ public class HTMLRendererManager {
     static {
         rendererMap = new ConcurrentHashMap<>();
         rendererMap.put("/index.html", new IndexRenderer());
-        rendererMap.put("/user/list", new UserListRenderer());
+        rendererMap.put("/user/list.html", new UserListRenderer());
         rendererMap.put("/user/login.html", new LoginRenderer());
         rendererMap.put("/user/form.html", new SignUpRenderer());
     }

@@ -47,7 +47,7 @@ public class RequestProcessor {
                 .build();
     }
 
-    @HandleRequest(path = "/user/list", httpMethod = HttpMethod.GET)
+    @HandleRequest(path = "/user/list.html", httpMethod = HttpMethod.GET)
     public HttpResponse userList(Session session) throws BadRequestException {
         Map<String, Object> parameters = new HashMap<>();
 
@@ -59,7 +59,7 @@ public class RequestProcessor {
         User user = UserDatabase.findUserById(userId);
         parameters.put("user", user);
 
-        byte[] body = HTMLRendererManager.render("/user/list", parameters);
+        byte[] body = HTMLRendererManager.render("/user/list.html", parameters);
         return new HttpResponse.Builder()
                 .headers(HttpMessageHeader.generateDefaultHeader(body, MIME.HTML.contentType))
                 .body(body)

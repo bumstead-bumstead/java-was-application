@@ -49,7 +49,7 @@ class IndexRenderer implements HTMLRenderer {
         htmlBuilder.append("<li><a href=\"https://facebook.com\" target=\"_blank\">Facebook</a></li>\n");
         htmlBuilder.append("</ul>\n");
         htmlBuilder.append("</li>\n");
-        htmlBuilder.append("<li><a href=\"./user/list\"><i class=\"glyphicon glyphicon-user\"></i></a></li>\n");
+        htmlBuilder.append("<li><a href=\"./user/list.html\"><i class=\"glyphicon glyphicon-user\"></i></a></li>\n");
         htmlBuilder.append("</ul>\n");
         htmlBuilder.append("</div>\n");
         htmlBuilder.append("</div>\n");
