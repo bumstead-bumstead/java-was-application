@@ -18,11 +18,21 @@ import static webserver.http.message.HttpHeaderUtils.*;
 import static webserver.http.message.URI.*;
 
 public class HttpMessageParser {
+
+    private RequestBodyParserManager requestBodyParserManager;
     private HttpMessageParser() {
+        requestBodyParserManager = RequestBodyParserManager.getInstance();
     }
 
+    private static class SingletonHelper {
+        private static final HttpMessageParser HTTP_MESSAGE_PARSER = new HttpMessageParser();
+    }
 
-    public static ByteArrayOutputStream parseHttpResponse(HttpResponse httpResponse) throws IOException {
+    public static HttpMessageParser getInstance() {
+        return SingletonHelper.HTTP_MESSAGE_PARSER;
+    }
+
+    public ByteArrayOutputStream parseHttpResponse(HttpResponse httpResponse) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         fillStatusLine(httpResponse, outputStream);
@@ -72,7 +82,7 @@ public class HttpMessageParser {
         outputStream.write(statusLine.getBytes());
     }
 
-    public static HttpRequest parseHttpRequest(InputStream inputStream) throws Exception {
+    public HttpRequest parseHttpRequest(InputStream inputStream) throws Exception {
         HttpRequest.Builder httpRequestBuilder = new HttpRequest.Builder();
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
@@ -94,7 +104,7 @@ public class HttpMessageParser {
                 .build();
     }
 
-    private static Map<String, String> readBody(BufferedReader bufferedReader,
+    private Map<String, String> readBody(BufferedReader bufferedReader,
                                                 HttpMessageHeader headers) throws Exception {
         if (!headers.containsKey(CONTENT_LENGTH_HEADER) || !headers.containsKey(CONTENT_TYPE_HEADER)) {
             return Map.of();
@@ -104,7 +114,7 @@ public class HttpMessageParser {
         String contentType = headers.getValue(CONTENT_TYPE_HEADER);
         String body = readBody(bufferedReader, contentLength);
 
-        return RequestBodyParserManager.parse(body, contentType);
+        return requestBodyParserManager.parse(body, contentType);
     }
 
     private static String readBody(BufferedReader bufferedReader, int contentLength) throws IOException {

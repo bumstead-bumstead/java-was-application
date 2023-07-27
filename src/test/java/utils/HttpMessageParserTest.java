@@ -1,5 +1,6 @@
 package utils;
 
+import org.junit.jupiter.api.BeforeEach;
 import webserver.http.session.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,11 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class HttpMessageParserTest {
+    private HttpMessageParser httpMessageParser;
+    @BeforeEach
+    void setUp() {
+        httpMessageParser = HttpMessageParser.getInstance();
+    }
 
     @Test
     @DisplayName("HttpResponse to OutputStream 파싱 로직 테스트")
@@ -24,7 +30,7 @@ class HttpMessageParserTest {
         HttpResponse httpResponse = new HttpResponse.Builder().build();
 
         //when
-        OutputStream outputStream = HttpMessageParser.parseHttpResponse(httpResponse);
+        OutputStream outputStream = httpMessageParser.parseHttpResponse(httpResponse);
         String output = outputStream.toString();
 
         //then
@@ -45,7 +51,7 @@ class HttpMessageParserTest {
                 .build();
 
         //when
-        OutputStream outputStream = HttpMessageParser.parseHttpResponse(httpResponse);
+        OutputStream outputStream = httpMessageParser.parseHttpResponse(httpResponse);
         String output = outputStream.toString();
 
         //then
@@ -82,7 +88,7 @@ class HttpMessageParserTest {
                 .build();
 
         //when
-        HttpRequest actual = HttpMessageParser.parseHttpRequest(inputStream);
+        HttpRequest actual = httpMessageParser.parseHttpRequest(inputStream);
 
         //then
         assertThat(actual).isEqualTo(expected);
@@ -119,7 +125,7 @@ class HttpMessageParserTest {
                 .build();
 
         //when
-        HttpRequest actual = HttpMessageParser.parseHttpRequest(inputStream);
+        HttpRequest actual = httpMessageParser.parseHttpRequest(inputStream);
 
         System.out.println("actual = " + actual);
         System.out.println("expected = " + expected);
@@ -156,7 +162,7 @@ class HttpMessageParserTest {
                 .build();
 
         //when
-        HttpRequest actual = HttpMessageParser.parseHttpRequest(inputStream);
+        HttpRequest actual = httpMessageParser.parseHttpRequest(inputStream);
 
         //then
         assertThat(actual).isEqualTo(expected);
@@ -199,7 +205,7 @@ class HttpMessageParserTest {
                 .build();
 
         //when
-        HttpRequest actual = HttpMessageParser.parseHttpRequest(inputStream);
+        HttpRequest actual = httpMessageParser.parseHttpRequest(inputStream);
 
         //then
         assertThat(actual).isEqualTo(expected);

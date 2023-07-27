@@ -14,9 +14,11 @@ public class RequestHandler implements Runnable {
 
     private Socket connection;
     private HttpRequestRouter httpRequestRouter;
+    private HttpMessageParser httpMessageParser;
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
         this.httpRequestRouter = HttpRequestRouter.getInstance();
+        this.httpMessageParser = HttpMessageParser.getInstance();
     }
 
     public void run() {
@@ -24,7 +26,7 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            HttpRequest httpRequest = HttpMessageParser.parseHttpRequest(in);
+            HttpRequest httpRequest = httpMessageParser.parseHttpRequest(in);
             printHttpRequestHeader(httpRequest);
             HttpResponse httpResponse = httpRequestRouter.route(httpRequest);
             response(out, httpResponse);
@@ -34,9 +36,9 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private static void response(OutputStream out, HttpResponse httpResponse) throws IOException {
+    private void response(OutputStream out, HttpResponse httpResponse) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
-        ByteArrayOutputStream outputStream = HttpMessageParser.parseHttpResponse(httpResponse);
+        ByteArrayOutputStream outputStream = httpMessageParser.parseHttpResponse(httpResponse);
 
          dos.write(outputStream.toByteArray());
          dos.flush();
