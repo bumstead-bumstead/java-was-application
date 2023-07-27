@@ -1,13 +1,17 @@
 package application.HTMLRenderer;
 
+import application.db.BoardDatabase;
+import application.model.Board;
 import application.model.User;
 
+import java.util.List;
 import java.util.Map;
 
 class IndexRenderer implements HTMLRenderer {
     @Override
     public byte[] render(Map<String, Object> parameters) {
         User user = (User) parameters.get("user");
+        List<Board> boardList = BoardDatabase.findAll();
         StringBuilder htmlBuilder = new StringBuilder();
 
         htmlBuilder.append("<!DOCTYPE html>\n");
@@ -93,42 +97,34 @@ class IndexRenderer implements HTMLRenderer {
         htmlBuilder.append("<div class=\"col-md-12 col-sm-12 col-lg-10 col-lg-offset-1\">\n");
         htmlBuilder.append("<div class=\"panel panel-default qna-list\">\n");
         htmlBuilder.append("<ul class=\"list\">\n");
-        htmlBuilder.append("<li>\n");
-        htmlBuilder.append("<div class=\"wrap\">\n");
-        htmlBuilder.append("<div class=\"main\">\n");
-        htmlBuilder.append("<strong class=\"subject\">\n");
-        htmlBuilder.append("<a href=\"./qna/show.html\">국내에서 Ruby on Rails와 Play가 활성화되기 힘든 이유는 뭘까?</a>\n");
-        htmlBuilder.append("</strong>\n");
-        htmlBuilder.append("<div class=\"auth-info\">\n");
-        htmlBuilder.append("<i class=\"icon-add-comment\"></i>\n");
-        htmlBuilder.append("<span class=\"time\">2016-01-15 18:47</span>\n");
-        htmlBuilder.append("<a href=\"./user/profile.html\" class=\"author\">자바지기</a>\n");
-        htmlBuilder.append("</div>\n");
-        htmlBuilder.append("<div class=\"reply\" title=\"댓글\">\n");
-        htmlBuilder.append("<i class=\"icon-reply\"></i>\n");
-        htmlBuilder.append("<span class=\"point\">8</span>\n");
-        htmlBuilder.append("</div>\n");
-        htmlBuilder.append("</div>\n");
-        htmlBuilder.append("</div>\n");
-        htmlBuilder.append("</li>\n");
-        htmlBuilder.append("<li>\n");
-        htmlBuilder.append("<div class=\"wrap\">\n");
-        htmlBuilder.append("<div class=\"main\">\n");
-        htmlBuilder.append("<strong class=\"subject\">\n");
-        htmlBuilder.append("<a href=\"./qna/show.html\">runtime 에 reflect 발동 주체 객체가 뭔지 알 방법이 있을까요?</a>\n");
-        htmlBuilder.append("</strong>\n");
-        htmlBuilder.append("<div class=\"auth-info\">\n");
-        htmlBuilder.append("<i class=\"icon-add-comment\"></i>\n");
-        htmlBuilder.append("<span class=\"time\">2016-01-05 18:47</span>\n");
-        htmlBuilder.append("<a href=\"./user/profile.html\" class=\"author\">김문수</a>\n");
-        htmlBuilder.append("</div>\n");
-        htmlBuilder.append("<div class=\"reply\" title=\"댓글\">\n");
-        htmlBuilder.append("<i class=\"icon-reply\"></i>\n");
-        htmlBuilder.append("<span class=\"point\">12</span>\n");
-        htmlBuilder.append("</div>\n");
-        htmlBuilder.append("</div>\n");
-        htmlBuilder.append("</div>\n");
-        htmlBuilder.append("</li>\n");
+
+        for (Board board : boardList) {
+            htmlBuilder.append("<li>\n");
+            htmlBuilder.append("<div class=\"wrap\">\n");
+            htmlBuilder.append("<div class=\"main\">\n");
+            htmlBuilder.append("<strong class=\"subject\">\n");
+            htmlBuilder.append("<a href=\"./qna/show.html\">")
+                    .append(board.getTitle())
+                    .append("</a>\n");
+            htmlBuilder.append("</strong>\n");
+            htmlBuilder.append("<div class=\"auth-info\">\n");
+            htmlBuilder.append("<i class=\"icon-add-comment\"></i>\n");
+            htmlBuilder.append("<span class=\"time\">")
+            .append(board.getCreatedAt().toString())
+                    .append("</span>\n");
+            htmlBuilder.append("<a href=\"./user/profile.html\" class=\"author\">")
+                    .append(board.getWriter())
+                    .append("</a>\n");
+            htmlBuilder.append("</div>\n");
+            htmlBuilder.append("<div class=\"reply\" title=\"댓글\">\n");
+            htmlBuilder.append("<i class=\"icon-reply\"></i>\n");
+            htmlBuilder.append("<span class=\"point\">0</span>\n");
+            htmlBuilder.append("</div>\n");
+            htmlBuilder.append("</div>\n");
+            htmlBuilder.append("</div>\n");
+            htmlBuilder.append("</li>\n");
+        }
+
         htmlBuilder.append("</ul>\n");
         htmlBuilder.append("<div class=\"row\">\n");
         htmlBuilder.append("<div class=\"col-md-3\"></div>\n");
