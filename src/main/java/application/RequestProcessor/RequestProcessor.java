@@ -18,6 +18,7 @@ import java.util.Map;
 
 public class RequestProcessor {
     private static final Logger logger = LoggerFactory.getLogger(RequestProcessor.class);
+    private HTMLRendererManager htmlRendererManager;
 
     private static class SingletonHelper {
         private static final RequestProcessor SERVICE_MANAGER = new RequestProcessor();
@@ -25,6 +26,10 @@ public class RequestProcessor {
 
     public static RequestProcessor getInstance() {
         return SingletonHelper.SERVICE_MANAGER;
+    }
+
+    private RequestProcessor() {
+        this.htmlRendererManager = HTMLRendererManager.getInstance();
     }
 
     @HandleRequest(path = "/index.html", httpMethod = HttpMethod.GET)
@@ -40,7 +45,7 @@ public class RequestProcessor {
             parameters.put("user", user);
         }
 
-        body = HTMLRendererManager.render("/index.html", parameters);
+        body = htmlRendererManager.render("/index.html", parameters);
         return new HttpResponse.Builder()
                 .headers(HttpMessageHeader.generateDefaultHeader(body, MIME.HTML.contentType))
                 .body(body)
@@ -59,7 +64,7 @@ public class RequestProcessor {
         User user = UserDatabase.findUserById(userId);
         parameters.put("user", user);
 
-        byte[] body = HTMLRendererManager.render("/user/list.html", parameters);
+        byte[] body = htmlRendererManager.render("/user/list.html", parameters);
         return new HttpResponse.Builder()
                 .headers(HttpMessageHeader.generateDefaultHeader(body, MIME.HTML.contentType))
                 .body(body)
@@ -76,7 +81,7 @@ public class RequestProcessor {
             parameters.put("user", user);
         }
 
-        byte[] body = HTMLRendererManager.render("/user/login.html", parameters);
+        byte[] body = htmlRendererManager.render("/user/login.html", parameters);
         return new HttpResponse.Builder()
                 .headers(HttpMessageHeader.generateDefaultHeader(body, MIME.HTML.contentType))
                 .body(body)
@@ -93,7 +98,7 @@ public class RequestProcessor {
             parameters.put("user", user);
         }
 
-        byte[] body = HTMLRendererManager.render("/user/form.html", parameters);
+        byte[] body = htmlRendererManager.render("/user/form.html", parameters);
         return new HttpResponse.Builder()
                 .headers(HttpMessageHeader.generateDefaultHeader(body, MIME.HTML.contentType))
                 .body(body)

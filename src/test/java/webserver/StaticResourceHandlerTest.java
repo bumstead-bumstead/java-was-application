@@ -1,5 +1,6 @@
 package webserver;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,16 +17,22 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
-import static webserver.handlers.StaticResourceHandler.handle;
 import static webserver.http.message.HttpHeaderUtils.CONTENT_TYPE_HEADER;
 public class StaticResourceHandlerTest {
+
+    private StaticResourceHandler staticResourceHandler;
+
+    @BeforeEach
+    void setUp() {
+        staticResourceHandler = StaticResourceHandler.getInstance();
+    }
 
     @Test
     @DisplayName("존재하는 경로의 정적 리소스의 경우 바이트 파일을 반환한다.")
     void getStaticResourceExisting() throws IOException, PathNotFoundException {
         String resourcePath = "/exampleForTest.txt";
         URI uri = new URI(resourcePath, Map.of(), MIME.TXT);
-        byte[] content = StaticResourceHandler.getResourceForTest(uri);
+        byte[] content = staticResourceHandler.getResourceForTest(uri);
         assertNotNull(content);
         assertTrue(content.length > 0);
     }
@@ -36,7 +43,7 @@ public class StaticResourceHandlerTest {
         String resourcePath = "/non_existing.txt";
         URI uri = new URI(resourcePath, Map.of(), MIME.TXT);
 
-        assertThatThrownBy(() -> StaticResourceHandler.getResourceForTest(uri))
+        assertThatThrownBy(() -> staticResourceHandler.getResourceForTest(uri))
                 .isInstanceOf(PathNotFoundException.class);
     }
 
@@ -51,7 +58,7 @@ public class StaticResourceHandlerTest {
                 .version("HTTP/1.1")
                 .build();
 
-        HttpResponse httpResponse = handle(httpRequest);
+        HttpResponse httpResponse = staticResourceHandler.handle(httpRequest);
         HttpMessageHeader headers = httpResponse.getHeaders();
         assertThat(mime.contentType).isEqualTo(headers.getValue(CONTENT_TYPE_HEADER));
     }

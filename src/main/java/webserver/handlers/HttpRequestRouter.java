@@ -1,6 +1,8 @@
 package webserver.handlers;
 
 import application.RequestProcessor.RequestProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import webserver.annotations.BodyParameter;
 import webserver.annotations.HandleRequest;
 import webserver.annotations.QueryParameter;
@@ -12,7 +14,6 @@ import webserver.http.session.Cookie;
 import webserver.http.session.Session;
 import webserver.http.session.SessionDatabase;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -22,10 +23,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class HttpRequestRouter {
-    //set default for test
-    static HttpMethodHandlerMapping requestMappings;
+    private final HttpMethodHandlerMapping requestMappings;
+    private StaticResourceHandler staticResourceHandler;
+    private static final Logger logger = LoggerFactory.getLogger(HttpRequestRouter.class);
 
     private HttpRequestRouter() {
+        staticResourceHandler = StaticResourceHandler.getInstance();
         requestMappings = new HttpMethodHandlerMapping();
         requestMappings.initialize();
 
@@ -47,7 +50,7 @@ public class HttpRequestRouter {
         return SingletonHelper.REQUEST_ROUTER;
     }
 
-    public HttpResponse route(HttpRequest httpRequest) throws InvocationTargetException, IllegalAccessException, IOException {
+    public HttpResponse route(HttpRequest httpRequest) {
         Map<String, String> bodyParameters = httpRequest.getBody();
         URI uri = httpRequest.getURI();
         Session session = getSession(httpRequest);
@@ -60,12 +63,14 @@ public class HttpRequestRouter {
                 return executeMethod(method, argumentValues);
             }
             //정적인 리소스로 취급하고 처리
-            return StaticResourceHandler.handle(httpRequest);
+            return staticResourceHandler.handle(httpRequest);
         } catch (PathNotFoundException e) {
             return HttpResponse.generateError(StatusCode.NOT_FOUND);
         } catch (BadRequestException e) {
             return HttpResponse.generateError(StatusCode.BAD_REQUEST);
         } catch (Exception e) {
+            logger.error(e.getMessage());
+            e.printStackTrace();
             return HttpResponse.generateError(StatusCode.INTERNAL_SERVER_ERROR);
         }
     }
