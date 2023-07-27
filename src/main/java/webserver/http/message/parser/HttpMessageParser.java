@@ -134,10 +134,22 @@ public class HttpMessageParser {
             parameters = parseParameters(stringURI);
         }
         if (hasExtension(path)) {
+            stringURI = removeQuery(stringURI);
             String extension = parseExtension(stringURI);
             return new URI(path, parameters, MIME.valueOf(extension.toUpperCase()));
         }
         return new URI(path, parameters);
+    }
+
+    private static String removeQuery(String path) {
+        int index = path.indexOf("?");
+        String result;
+        if (index != -1) {
+            result = path.substring(0, index);
+        } else {
+            result = path;
+        }
+        return result;
     }
 
     private static String parseExtension(String stringURI) {
