@@ -13,6 +13,7 @@ public class HTMLRendererManager {
         rendererMap.put("/index.html", new IndexRenderer());
         rendererMap.put("/user/list", new UserListRenderer());
         rendererMap.put("/user/login.html", new LoginRenderer());
+        rendererMap.put("/user/form.html", new SignUpRenderer());
     }
 
     public static byte[] render(String path, Map<String, Object> parameters) throws BadRequestException {

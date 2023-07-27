@@ -70,7 +70,6 @@ public class RequestProcessor {
     public HttpResponse loginPage(Session session) throws BadRequestException {
         Map<String, Object> parameters = new HashMap<>();
 
-        //Session 없을 시 비워서 보내기
         if (session != null) {
             String userId = (String) session.getAttribute("userId");
             User user = UserDatabase.findUserById(userId);
@@ -78,6 +77,23 @@ public class RequestProcessor {
         }
 
         byte[] body = HTMLRendererManager.render("/user/login.html", parameters);
+        return new HttpResponse.Builder()
+                .headers(HttpMessageHeader.generateDefaultHeader(body, MIME.HTML.contentType))
+                .body(body)
+                .build();
+    }
+
+    @HandleRequest(path = "/user/form.html", httpMethod = HttpMethod.GET)
+    public HttpResponse signUpPage(Session session) throws BadRequestException {
+        Map<String, Object> parameters = new HashMap<>();
+
+        if (session != null) {
+            String userId = (String) session.getAttribute("userId");
+            User user = UserDatabase.findUserById(userId);
+            parameters.put("user", user);
+        }
+
+        byte[] body = HTMLRendererManager.render("/user/form.html", parameters);
         return new HttpResponse.Builder()
                 .headers(HttpMessageHeader.generateDefaultHeader(body, MIME.HTML.contentType))
                 .body(body)
