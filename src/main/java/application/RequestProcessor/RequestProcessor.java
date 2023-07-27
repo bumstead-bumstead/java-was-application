@@ -162,7 +162,7 @@ public class RequestProcessor {
     }
 
     @HandleRequest(path = "/board/create", httpMethod = HttpMethod.POST)
-    public HttpResponse createBoard(@BodyParameter(key = "write") String write,
+    public HttpResponse createBoard(@BodyParameter(key = "writer") String writer,
                                    @BodyParameter(key = "title") String title,
                                    @BodyParameter(key = "contents") String contents,
                                     Session session) {
@@ -170,9 +170,26 @@ public class RequestProcessor {
             return HttpResponse.generateRedirect("http://localhost:8080/user/login.html");
         }
 
-        Board board = new Board(write, LocalDate.now(), title, contents);
+        Board board = new Board(writer, LocalDate.now(), title, contents);
         BoardDatabase.addBoard(board);
 
         return HttpResponse.generateRedirect("http://localhost:8080/index.html");
+    }
+
+    @HandleRequest(path = "/qna/form.html", httpMethod = HttpMethod.GET)
+    public HttpResponse qnaPage(Session session) throws BadRequestException {
+        Map<String, Object> parameters = new HashMap<>();
+
+        if (session != null) {
+            String userId = (String) session.getAttribute("userId");
+            User user = UserDatabase.findUserById(userId);
+            parameters.put("user", user);
+        }
+
+        byte[] body = htmlRendererManager.render("/qna/form.html", parameters);
+        return new HttpResponse.Builder()
+                .headers(HttpMessageHeader.generateDefaultHeader(body, MIME.HTML.contentType))
+                .body(body)
+                .build();
     }
 }
