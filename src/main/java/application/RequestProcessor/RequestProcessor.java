@@ -1,7 +1,9 @@
 package application.RequestProcessor;
 
 import application.HTMLRenderer.HTMLRendererManager;
+import application.db.BoardDatabase;
 import application.db.UserDatabase;
+import application.model.Board;
 import application.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,7 @@ import webserver.http.session.Cookie;
 import webserver.http.session.Session;
 import webserver.http.session.SessionDatabase;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -156,5 +159,20 @@ public class RequestProcessor {
         if (!password.equals(targetUser.getPassword())) {
             throw new BadRequestException("비밀번호가 틀렸습니다.");
         }
+    }
+
+    @HandleRequest(path = "/board/create", httpMethod = HttpMethod.POST)
+    public HttpResponse createBoard(@BodyParameter(key = "write") String write,
+                                   @BodyParameter(key = "title") String title,
+                                   @BodyParameter(key = "contents") String contents,
+                                    Session session) {
+        if (session == null) {
+            return HttpResponse.generateRedirect("http://localhost:8080/user/login.html");
+        }
+
+        Board board = new Board(write, LocalDate.now(), title, contents);
+        BoardDatabase.addBoard(board);
+
+        return HttpResponse.generateRedirect("http://localhost:8080/index.html");
     }
 }
