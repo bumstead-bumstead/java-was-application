@@ -1,4 +1,4 @@
-package Controller;
+package RequestProcessor;
 
 import application.RequestProcessor.RequestProcessor;
 import webserver.http.session.Session;
@@ -250,7 +250,6 @@ class RequestProcessorTest {
 
             assertThat(httpResponse.getStatusCode()).isEqualTo(StatusCode.FOUND);
             assertThat(httpResponse.getHeaders().getValue("Location")).contains("login.html");
-
         }
     }
 }
