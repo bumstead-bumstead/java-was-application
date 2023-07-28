@@ -1,10 +1,9 @@
 package RequestProcessor;
 
 import application.RequestProcessor.RequestProcessor;
-import webserver.http.session.Session;
-import webserver.http.session.SessionDatabase;
+import application.db.BoardDatabase;
 import application.db.UserDatabase;
-import webserver.http.session.Cookie;
+import application.model.Board;
 import application.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +14,9 @@ import webserver.http.message.HttpHeaderUtils;
 import webserver.http.message.HttpMessageHeader;
 import webserver.http.message.HttpResponse;
 import webserver.http.message.StatusCode;
+import webserver.http.session.Cookie;
+import webserver.http.session.Session;
+import webserver.http.session.SessionDatabase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -247,6 +249,62 @@ class RequestProcessorTest {
         @DisplayName("세션이 존재하지 않는 경우 login.html로 redirection한다.")
         void getListWithoutSession() throws BadRequestException {
             HttpResponse httpResponse = requestProcessor.userList(null);
+
+            assertThat(httpResponse.getStatusCode()).isEqualTo(StatusCode.FOUND);
+            assertThat(httpResponse.getHeaders().getValue("Location")).contains("login.html");
+        }
+    }
+
+    @Nested
+    @DisplayName("board 테스트")
+    class boardTest {
+        RequestProcessor requestProcessor;
+        String userId;
+        String password;
+        String name;
+        String email;
+        String writer;
+        String title;
+        String contents;
+
+        @BeforeEach
+        void setup() throws BadRequestException {
+            UserDatabase.clear();
+            requestProcessor = RequestProcessor.getInstance();
+            userId = "userId";
+            password = "password";
+            name = "name";
+            email = "asdsda@dasads";
+
+            writer = "이요환";
+            title = "제목";
+            contents = "내용";
+
+            requestProcessor.createUser(userId, password, name, email);
+            requestProcessor.login(userId, password);
+        }
+
+        @Test
+        @DisplayName("유효한 세션이 있는 경우 보드를 생성한다.")
+        void createBoardWithSession() {
+            Session session = new Session();
+            session.addAttribute("userId", "userId");
+            SessionDatabase.addSession(session);
+
+            HttpResponse httpResponse = requestProcessor.createBoard(writer, title, contents, session);
+
+            Board actual = BoardDatabase.findAll().get(0);
+
+            assertThat(writer).isEqualTo(actual.getWriter());
+            assertThat(title).isEqualTo(actual.getTitle());
+            assertThat(contents).isEqualTo(actual.getContents());
+            assertThat(httpResponse.getStatusCode()).isEqualTo(StatusCode.FOUND);
+        }
+
+        @Test
+        @DisplayName("세션이 존재하지 않는 경우 login.html로 redirection한다.")
+        void getListWithoutSession() throws BadRequestException {
+            HttpResponse httpResponse = requestProcessor.createBoard(writer, title, contents, null);
 
             assertThat(httpResponse.getStatusCode()).isEqualTo(StatusCode.FOUND);
             assertThat(httpResponse.getHeaders().getValue("Location")).contains("login.html");
